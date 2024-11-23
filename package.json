@@ -1,0 +1,30 @@
+{
+  "name": "frontend-2nd-module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "browser-sync": "^3.0.3",
+    "gulp": "^5.0.0",
+    "gulp-autoprefixer": "^7.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^4.0.1",
+    "gulp-less": "^5.0.0",
+    "gulp-load-plugins": "^2.0.8",
+    "gulp-notify": "^5.0.0",
+    "gulp-pug": "^5.0.0",
+    "gulp-sourcemaps": "^3.0.0"
+  },
+  "dependencies": {
+    "inputmask": "^5.0.6-beta.3"
+  }
+}
