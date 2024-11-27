@@ -1,5 +1,6 @@
 import { AuthorsView } from "./authorsView.js"
 import { CommunitiesView } from "./communitiesView.js"
+import { CommunityView } from "./communityView.js"
 import { HomeView } from "./homeView.js"
 import { LoginView } from "./loginView.js"
 import { ProfileView } from "./profileView.js"
@@ -13,7 +14,8 @@ export function initRouter() {
         '/profile': new ProfileView(),
         '/registration': new RegistrationView(),
         '/authors': new AuthorsView(),
-        '/communities': new CommunitiesView()
+        '/communities': new CommunitiesView(),
+        '/communities/:id': new CommunityView()
     };
 
     const appContainer = document.getElementById('app')
@@ -21,7 +23,23 @@ export function initRouter() {
     async function loadPage(path, queryParams = {}) {
         console.log(`Загрузка страницы: ${path}`)
 
-        const view = routes[path]
+        let view = null
+        let params = {}
+
+        if (routes[path]) {
+            view = routes[path];
+        }
+        else {
+            for (const route in routes) {
+                const regex = new RegExp(`^${route.replace(/:\w+/g, '([\\w-]+)')}$`)
+                const match = path.match(regex)
+                if (match) {
+                    view = routes[route]
+                    params = {id: match[1]}
+                    break
+                }
+            }
+        }
 
         if (!view) {
             window.history.pushState({}, '', '/')
@@ -33,7 +51,7 @@ export function initRouter() {
             appContainer.innerHTML = ''
             appContainer.innerHTML = await view.getHtml();
             if (typeof view.runScript === 'function') {
-                await view.runScript(queryParams)
+                await view.runScript({...queryParams, ...params})
             }
         } catch (error) {
             console.error(`Ошибка загрузки страницы "${path}":`, error)

@@ -1,5 +1,5 @@
 import { apiUrl } from "./constants.js"
-import { getCommunities, getCommunity, getMyCommunities, getProfile, logout, subscribe, unsubscribe } from "./fetchService.js"
+import { getCommunities, getMyCommunities, getProfile, logout, subscribe, unsubscribe } from "./fetchService.js"
 import { View } from "./view.js"
 
 export class CommunitiesView extends View {
@@ -66,7 +66,7 @@ export class CommunitiesView extends View {
                         isAuthorized = true
                     }
     
-                    displayCommunities()
+                    await displayCommunities()
                 }
                 catch(err) {
                     console.log(err)
@@ -120,7 +120,8 @@ export class CommunitiesView extends View {
                                 community.appendChild(communityBtn)
                             }
                             communityBtn.addEventListener('mousedown', (event) => event.preventDefault())
-                            communityBtn.addEventListener('click', async () => {
+                            communityBtn.addEventListener('click', async (event) => {
+                                event.stopPropagation()
                                 if (communityBtn.classList.contains('community__subscribe')) {
                                     try {
                                         const response = await subscribe(`${apiUrl}/community/${element.id}/subscribe`)
@@ -147,7 +148,8 @@ export class CommunitiesView extends View {
                             })
     
                             community.addEventListener('click', () => {
-                                ////
+                                window.history.pushState({}, '', `/communities/${element.id}`)
+                                window.router.loadPage(`/communities/${element.id}`)
                             })
     
                             communitiesCont.appendChild(community)
@@ -169,7 +171,8 @@ export class CommunitiesView extends View {
                             community.appendChild(communityName)
     
                             community.addEventListener('click', () => {
-                                ////
+                                window.history.pushState({}, '', `/communities/${element.id}`)
+                                window.router.loadPage(`/communities/${element.id}`)
                             })
     
                             communitiesCont.appendChild(community)
