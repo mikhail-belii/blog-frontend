@@ -1,88 +1,146 @@
+import { View } from "./view.js";
 import { apiUrl } from "./constants.js"
 import { getPosts, getProfile, getTags, likePost, logout, unlikePost } from "./fetchService.js"
 
-const preloader = document.querySelector('.spinner')
-const preloaderBg = document.querySelector('.preloader-bg')
-var isAuthorized = false
+export class HomeView extends View {
+    async getHtml() {
+        return `
+        <button type="button" id="postt">Написать пост</button>
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const writePostBtn = document.getElementById('write-post-btn')
-    const userEmail = document.getElementById('user-email')
-    const login = document.getElementById('login')
-    const userEmailText = document.getElementById('user-email-text')
-    const profileRdrct = document.getElementById('profile')
-    const logoutBtn = document.getElementById('logout')
-    const homeRdrct = document.getElementById('home')
-    const authorsRdrct = document.getElementById('authors')
-    const communitiesRdrct = document.getElementById('communities')
-    const tagList = document.getElementById('tag-list')
-    const $pageSize = document.getElementById('pageSize')
-    const applyFiltersBtn = document.getElementById('apply-filters-btn')
-    const authorName = document.getElementById('author-name')
-    const sortingList = document.getElementById('sorting-list')
-    const minTime = document.getElementById('min-time')
-    const maxTime = document.getElementById('max-time')
-    const $onlyMine = document.getElementById('only-mine')
+        <div class="filters">
+            <div class="filters-head">Фильтры</div>
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let curPage = parseInt(urlParams.get('page')) || 1
-    let pageSize = parseInt(urlParams.get('size')) || 5
-    let listWithTags = urlParams.getAll('tags') || []
-    let author = urlParams.get('author') || null
-    let sorting = urlParams.get('sorting') || 'CreateDesc'
-    let min = parseInt(urlParams.get('min')) || null
-    let max = parseInt(urlParams.get('max')) || null
-    let onlyMine = urlParams.get('onlyMyCommunities') || false
+            <div class="filters__author-name">
+                <label for="author-name">Поиск по имени автора</label>
+                <input type="text" id="author-name">
+            </div>
 
-    await refreshData()
+            <div class="filters__tag-search">
+                <label for="tag-list">Поиск по тегам</label>
+                <select multiple size="3" id="tag-list">
 
-    login.addEventListener('click', () => {
-        window.location.href = 'login.html'
-    })
+                </select>
+            </div>
 
-    homeRdrct.addEventListener('click', () => {
-        window.location.href = 'index.html'
-    })
+            <div class="filters__sorting">
+                <label for="sorting-list">Сортировать</label>
+                <select id="sorting-list">
+                    <option value="CreateDesc">По дате создания (сначала новые)</option>
+                    <option value="CreateAsc">По дате создания (сначала старые)</option>
+                    <option value="LikeDesc">По количеству лайков (сначала популярные)</option>
+                    <option value="LikeAsc">По количеству лайков (сначала не популярные)</option>
+                </select>
+            </div>
 
-    profileRdrct.addEventListener('mousedown', (event) => event.preventDefault())
-    profileRdrct.addEventListener('click', () => {
-        window.location.href = 'profile.html'
-    })
-    logoutBtn.addEventListener('mousedown', (event) => event.preventDefault())
-    logoutBtn.addEventListener('click', async () => {
+            <div class="filters__min-time">
+                <label for="min-time">Время чтения от</label>
+                <input type="number" id="min-time">
+            </div>
+
+            <div class="filters__max-time">
+                <label for="max-time">Время чтения до</label>
+                <input type="number" id="max-time">
+            </div>
+
+            <div class="filters__only-mine">
+                <input type="checkbox" id="only-mine">
+                <span>Только мои группы</span>
+            </div>
+
+            <div class="filters__apply-btn">
+                <button type="button" class="apply-filters-btn" id="apply-filters-btn">Применить</button>
+            </div>
+        </div>
+
+        <div class="posts">
+            
+        </div>
+
+        <div class="pagination">
+            <div class="pagination__page"></div>
+            <div class="pagination__size">
+                <label for="pageSize">Число постов на странице</label>
+                <select id="pageSize">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+        </div>
+        `
+    }
+
+    async runScript() {
+        const style = document.querySelector('link[rel="stylesheet"]')
+        style.href = '/static/css/index.css'
+        const title = document.querySelector('title')
+        title.innerText = 'Главная'
+        const homeRdrct = document.getElementById('home')
+        const authorsRdrct = document.getElementById('authors')
+        const communitiesRdrct = document.getElementById('communities')
+        const writePostRdrct = document.getElementById('post')
+        const loginRdrct = document.getElementById('login')
+        const userEmail = document.querySelector('.user-email')
+        homeRdrct.style.display = 'block'
+        authorsRdrct.style.display = 'block'
+        communitiesRdrct.style.display = 'block'
+        writePostRdrct.style.display = 'none'
+
+        const writePostBtn = document.getElementById('postt')
+        const userEmailText = document.querySelector('.user-email-text')
+        const logoutBtn = document.querySelector('.logout')
+        
+
+        const tagList = document.getElementById('tag-list')
+        const $pageSize = document.getElementById('pageSize')
+        const applyFiltersBtn = document.getElementById('apply-filters-btn')
+        const authorName = document.getElementById('author-name')
+        const sortingList = document.getElementById('sorting-list')
+        const minTime = document.getElementById('min-time')
+        const maxTime = document.getElementById('max-time')
+        const $onlyMine = document.getElementById('only-mine')
+        var isAuthorized = false
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let curPage = parseInt(urlParams.get('page')) || 1
+        let pageSize = parseInt(urlParams.get('size')) || 5
+        let listWithTags = urlParams.getAll('tags') || []
+        let author = urlParams.get('author') || null
+        let sorting = urlParams.get('sorting') || 'CreateDesc'
+        let min = parseInt(urlParams.get('min')) || null
+        let max = parseInt(urlParams.get('max')) || null
+        let onlyMine = urlParams.get('onlyMyCommunities') || false
+
+        await refreshData()
+
+        logoutBtn.addEventListener('mousedown', (event) => event.preventDefault())
+        logoutBtn.addEventListener('click', async () => {
         try {
             const response = await logout(`${apiUrl}/account/logout`)
             if (response.isSuccess) {
-                window.location.href = 'index.html'
+                window.history.pushState({}, '', '/')
+                window.router.loadPage('/')
                 return
             }
         }
         catch (err) {
             console.log(err)
         }
-    })
+        })
 
-    authorsRdrct.addEventListener('mousedown', (event) => event.preventDefault())
-    authorsRdrct.addEventListener('click', () => {
-        window.location.href = 'authors.html'
-    })
-
-    communitiesRdrct.addEventListener('mousedown', (event) => event.preventDefault())
-    communitiesRdrct.addEventListener('click', () => {
-        window.location.href = 'communities.html'
-    })
-
-    $pageSize.addEventListener('change', () => {
+        $pageSize.addEventListener('change', () => {
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.set('page', 1);
         newUrl.searchParams.set('size', $pageSize.value);
         window.location.href = newUrl.toString();
-    })
+        })
 
-    applyFiltersBtn.addEventListener('mousedown', (event) => event.preventDefault())
-    applyFiltersBtn.addEventListener('click', async () => {
+        applyFiltersBtn.addEventListener('mousedown', (event) => event.preventDefault())
+        applyFiltersBtn.addEventListener('click', async () => {
         if (minTime.value < 0 || minTime.value > 100000 ||
-             maxTime.value < 0 || maxTime.value > 100000 || minTime.value > maxTime.value) {
+                maxTime.value < 0 || maxTime.value > 100000 || 
+                minTime.value > maxTime.value && minTime.value !== '' && maxTime.value !== '') {
             alert('Введите корректное время чтения')
             return
         }
@@ -113,9 +171,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         newUrl.searchParams.set('page', 1)
         window.location.href = newUrl.toString();
-    })
+        })
 
-    async function refreshData() {
+        async function refreshData() {
+        const preloader = document.querySelector('.spinner')
+        const preloaderBg = document.querySelector('.preloader-bg')
         preloaderBg.style.display = 'flex'
         preloader.style.display = 'block'
         setTimeout(async () => {
@@ -124,9 +184,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!response.isSuccess) {
                     writePostBtn.style.display = 'none'
                     userEmail.style.display = 'none'
+                    loginRdrct.style.display = 'block'
                 }
                 else {
-                    login.style.display = 'none'
+                    loginRdrct.style.display = 'none'
+                    userEmail.style.display = 'block'
                     userEmailText.innerText = response.response.email
                     isAuthorized = true
                 }
@@ -153,76 +215,79 @@ document.addEventListener('DOMContentLoaded', async () => {
                 preloaderBg.style.display = 'none'
             }
         }, 500)
-    }
+        }
 
-    function displayPagination(pagesAmount) {
+        function displayPagination(pagesAmount) {
         const pagination = document.querySelector(".pagination__page")
         const ulEl = document.createElement("ul")
         ulEl.classList.add("pagination__list")
-    
+
         const arrowLeft = document.createElement('li')
         arrowLeft.innerHTML = '&laquo;'
         arrowLeft.classList.add("pagination__item")
         arrowLeft.id = 'arrow-left'
         ulEl.appendChild(arrowLeft)
-    
-        const maxVisiblePages = 10;
-        const halfMaxVisiblePages = Math.floor(maxVisiblePages / 2);
-    
-        let startPage, endPage;
-    
+
+        const maxVisiblePages = 10
+        const halfMaxVisiblePages = Math.floor(maxVisiblePages / 2)
+
+        let startPage, endPage
+
         if (pagesAmount <= maxVisiblePages) {
-            startPage = 1;
-            endPage = pagesAmount;
-        } else {
+            startPage = 1
+            endPage = pagesAmount
+        }
+        else {
             if (curPage <= halfMaxVisiblePages + 1) {
-                startPage = 1;
-                endPage = maxVisiblePages - 1;
-            } else if (curPage >= pagesAmount - halfMaxVisiblePages) {
-                startPage = pagesAmount - maxVisiblePages + 2;
-                endPage = pagesAmount;
-            } else {
-                startPage = curPage - halfMaxVisiblePages;
-                endPage = curPage + halfMaxVisiblePages;
+                startPage = 1
+                endPage = maxVisiblePages - 1
+            }
+            else if (curPage >= pagesAmount - halfMaxVisiblePages) {
+                startPage = pagesAmount - maxVisiblePages + 2
+                endPage = pagesAmount
+            }
+            else {
+                startPage = curPage - halfMaxVisiblePages
+                endPage = curPage + halfMaxVisiblePages
             }
         }
-    
+
         if (startPage > 1) {
             const firstPage = displayPaginationButton(1)
             ulEl.appendChild(firstPage)
-    
+
             const ellipsisStart = document.createElement('li')
             ellipsisStart.innerHTML = '...'
             ellipsisStart.classList.add("pagination__item")
             ulEl.appendChild(ellipsisStart)
         }
-    
+
         for (let i = startPage; i <= endPage; i++) {
             const liEl = displayPaginationButton(i)
             ulEl.appendChild(liEl)
         }
-    
+
         if (pagesAmount > maxVisiblePages && endPage < pagesAmount) {
             const ellipsisEnd = document.createElement('li')
             ellipsisEnd.innerHTML = '...'
             ellipsisEnd.classList.add("pagination__item")
             ulEl.appendChild(ellipsisEnd)
-    
+
             const lastPage = displayPaginationButton(pagesAmount)
             ulEl.appendChild(lastPage)
         }
-    
+
         const arrowRight = document.createElement('li')
         arrowRight.innerHTML = '&raquo;'
         arrowRight.classList.add("pagination__item")
         arrowRight.id = 'arrow-right'
         ulEl.appendChild(arrowRight)
-    
+
         pagination.appendChild(ulEl)
-    
+
         const arrowLeftBtn = document.getElementById('arrow-left')
         const arrowRightBtn = document.getElementById('arrow-right')
-    
+
         arrowLeftBtn.addEventListener('mousedown', (event) => event.preventDefault())
         arrowLeftBtn.addEventListener('click', () => {
             if (curPage > 1) {
@@ -231,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.location.href = newUrl.toString()
             }
         })
-    
+
         arrowRightBtn.addEventListener('mousedown', (event) => event.preventDefault())
         arrowRightBtn.addEventListener('click', () => {
             if (curPage < pagesAmount) {
@@ -240,9 +305,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.location.href = newUrl.toString()
             }
         })
-    }
+        }
 
-    function displayPaginationButton(pageNumber) {
+        function displayPaginationButton(pageNumber) {
         const liEl = document.createElement("li")
         liEl.classList.add("pagination__item")
         liEl.innerText = pageNumber
@@ -252,15 +317,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         liEl.addEventListener('click', () => {
-            const newUrl = new URL(window.location.href);
-            newUrl.searchParams.set('page', pageNumber);
-            window.location.href = newUrl.toString();
+            const newUrl = new URL(window.location.href)
+            newUrl.searchParams.set('page', pageNumber)
+            window.location.href = newUrl.toString()
         })
 
         return liEl
-    }
+        }
 
-    async function loadPage() {
+        async function loadPage() {
         authorName.value = author
         sortingList.value = sorting
         minTime.value = min
@@ -414,22 +479,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         displayPagination(response.response.pagination.count)
-    }
+        }
 
-    function addReadMore(post) {
+        function addReadMore(post) {
         const description = post.querySelector('.post__description')
         const maxLength = 300
-    
+
         if (description.innerText.length > maxLength) {
             const shortText = description.innerText.substring(0, maxLength) + '...'
             const fullText = description.innerText
-    
+
             description.innerText = shortText
-    
+
             const readMoreButton = document.createElement('span')
             readMoreButton.classList.add('read-more-btn')
             readMoreButton.innerText = 'Читать полностью'
-    
+
             readMoreButton.addEventListener('click', () => {
                 if (description.innerText === shortText) {
                     description.innerText = fullText
@@ -440,20 +505,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     readMoreButton.innerText = 'Читать полностью'
                 }
             });
-    
+
             description.insertAdjacentElement('afterend', readMoreButton)
         }
-    }
-    
-})
+        }
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    const hours = date.getHours().toString().padStart(2, '0')
-    const minutes = date.getMinutes().toString().padStart(2, '0')
-    const formatted = `${day}.${month}.${year} ${hours}:${minutes}`
-    return formatted
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr)
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = (date.getMonth() + 1).toString().padStart(2, '0')
+            const year = date.getFullYear()
+            const hours = date.getHours().toString().padStart(2, '0')
+            const minutes = date.getMinutes().toString().padStart(2, '0')
+            const formatted = `${day}.${month}.${year} ${hours}:${minutes}`
+            return formatted
+        }
+    }
 }

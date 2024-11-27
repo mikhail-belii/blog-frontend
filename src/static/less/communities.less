@@ -51,9 +51,6 @@ body {
     opacity: 50%;
     align-content: end;
     cursor: default;
-    & > {
-        margin-bottom: 2vh;
-    }
 }
 
 .navigation {
@@ -72,13 +69,13 @@ body {
     cursor: pointer;
 }
 
-#user-email, #login {
+.user-email, #login {
     margin-left: auto;
     margin-right: 2vw;
     cursor: pointer;
 }
 
-#user-email:hover .dropdown-content {
+.user-email:hover .dropdown-content {
     display: block;
 }
 
@@ -89,6 +86,7 @@ body {
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     width: 10vw;
+    transform: translate(-10%);
 }
 
 .dropdown-content div {
@@ -140,4 +138,64 @@ body {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
 }
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    margin-top: 3vh;
+}
+
+.community {
+    display: flex;
+    width: 60vw;
+    height: 5vh;
+    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 1vh 1vw;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.community:hover {
+    background-color: darken(white, 10%);
+}
+
+.community:active {
+    background-color: darken(white, 20%);
+}
+
+.community__name {
+    font-weight: bold;
+    font-size: 1.1vw;
+}
+
+.community__subscribe, .community__unsubscribe {
+    color: white;
+    padding: 0.5vh 0.5vw;
+    z-index: 3;
+    border-radius: 5px;
+}
+
+.community__subscribe {
+    background-color: @blue;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
+}
+
+.community__unsubscribe {
+    background-color: red;
+    &:hover {
+        background-color: darken(red, 25%);
+    }
+    &:active {
+        background-color: darken(red, 30%);
+    }
 }

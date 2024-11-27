@@ -5,6 +5,10 @@
 
 @blue: rgb(0, 102, 255);
 
+h1 {
+    color: black;
+    z-index: 1000;
+}
 body {
     padding: 0;
     margin: 0;
@@ -116,13 +120,13 @@ input, select {
     cursor: pointer;
 }
 
-#user-email, #login, #communities {
+.user-email, #login, #communities {
     margin-left: auto;
     margin-right: 2vw;
     cursor: pointer;
 }
 
-#user-email:hover .dropdown-content {
+.user-email:hover .dropdown-content {
     display: block;
 }
 
@@ -133,6 +137,7 @@ input, select {
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     width: 10vw;
+    transform: translate(-10%);
 }
 
 .dropdown-content div {
@@ -191,7 +196,7 @@ select {
     outline: none;
 }
 
-#write-post-btn {
+#postt {
     display: flex;
     align-items: end;
 }
