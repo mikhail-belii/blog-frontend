@@ -64,7 +64,7 @@ export class AuthorsView extends View {
                         userEmailText.innerText = response.response.email
                     }
     
-                    displayAuthors()
+                    await displayAuthors()
                 }
                 catch(err) {
                     console.log(err)
