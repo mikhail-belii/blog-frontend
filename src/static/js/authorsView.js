@@ -9,9 +9,7 @@ export class AuthorsView extends View {
                 `
     }
 
-    async runScript(queryParams) {
-        const style = document.querySelector('link[rel="stylesheet"]')
-        style.href = '/static/css/authors.css'
+    async runScript() {
         const title = document.querySelector('title')
         title.innerText = 'Авторы'
         const homeRdrct = document.getElementById('home')

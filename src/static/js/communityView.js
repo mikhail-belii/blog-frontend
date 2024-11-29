@@ -1,5 +1,5 @@
 import { apiUrl } from "./constants.js";
-import { getCommunity, getPosts, getProfile, getTags, getUsersRole, likePost, logout, unlikePost } from "./fetchService.js";
+import { getCommunity, getPosts, getProfile, getTags, getUsersRole, likePost, logout, subscribe, unlikePost, unsubscribe } from "./fetchService.js";
 import { View } from "./view.js";
 
 export class CommunityView extends View {
@@ -8,8 +8,6 @@ export class CommunityView extends View {
     }
 
     async runScript(params) {
-        const style = document.querySelector('link[rel="stylesheet"]')
-        style.href = '/static/css/communities.css'
         const title = document.querySelector('title')
         title.innerText = 'Сообщество'
         const homeRdrct = document.getElementById('home')
@@ -28,12 +26,11 @@ export class CommunityView extends View {
         const mainCont = document.querySelector('.main-container')
         var isAuthorized = false
         const communityId = params.id
+        let curPage = parseInt(params.page) || 1
+        let pageSize = parseInt(params.size) || 5
+        let listWithTags = params.tags || []
+        let sorting = params.sorting || 'CreateDesc'
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let curPage = parseInt(urlParams.get('page')) || 1
-        let pageSize = parseInt(urlParams.get('size')) || 5
-        let listWithTags = urlParams.getAll('tags') || []
-        let sorting = urlParams.get('sorting') || 'CreateDesc'
 
         await refreshData()
 
@@ -72,6 +69,7 @@ export class CommunityView extends View {
                     }
     
                     await displayPage()
+                    await displayQuery()
                 }
                 catch(err) {
                     console.log(err)
@@ -92,10 +90,11 @@ export class CommunityView extends View {
                 const response = await getCommunity(`${apiUrl}/community/${communityId}`)
                 if (response.isSuccess) {
                     const communityInfo = response.response
+                    const communityTitle = document.createElement('div')
+                    communityTitle.classList.add('main-info__title')
                     const communityName = document.createElement('span')
-                    communityName.classList.add('main-info__title')
                     communityName.innerText = `Группа "${communityInfo.name}"`
-                    mainInfo.appendChild(communityName)
+                    communityTitle.appendChild(communityName)
 
                     const response2 = await getUsersRole(`${apiUrl}/community/${communityId}/role`)
                     if (response2.isSuccess) {
@@ -104,20 +103,30 @@ export class CommunityView extends View {
                         switch (response2.response) {
                             case null:
                                 communityBtn.classList.add('community__subscribe')
+                                communityBtn.classList.add('subunsub-btn')
                                 communityBtn.innerText = 'Подписаться'
-                                mainInfo.appendChild(communityBtn)
+                                communityTitle.appendChild(communityBtn)
+                                mainInfo.appendChild(communityTitle)
                                 break
                             case 'Subscriber':
                                 communityBtn.classList.add('community__unsubscribe')
+                                communityBtn.classList.add('subunsub-btn')
                                 communityBtn.innerText = 'Отписаться'
-                                mainInfo.appendChild(communityBtn)
+                                communityTitle.appendChild(communityBtn)
+                                mainInfo.appendChild(communityTitle)
                                 break
                             case 'Administrator':
                                 const writePostRdrct = document.createElement('button')
+                                writePostRdrct.classList.add('write-post-btn')
                                 writePostRdrct.id = 'post'
                                 writePostRdrct.innerText = 'Написать пост'
-                                mainInfo.appendChild(writePostRdrct)
+                                communityTitle.appendChild(writePostRdrct)
+                                mainInfo.appendChild(communityTitle)
+                                break
                         }
+                    }
+                    else {
+                        mainInfo.appendChild(communityTitle)
                     }
 
                     const subscribers = document.createElement('div')
@@ -135,7 +144,9 @@ export class CommunityView extends View {
                     mainInfo.appendChild(communityType)
 
                     const adminsCont = document.createElement('div')
+                    adminsCont.classList.add('main-info__admins')
                     const adminsContTitle = document.createElement('div')
+                    adminsContTitle.classList.add('main-info__admins__title')
                     adminsContTitle.innerText = 'Администраторы'
                     adminsCont.appendChild(adminsContTitle)
                     communityInfo.administrators.forEach(element => {
@@ -204,16 +215,6 @@ export class CommunityView extends View {
                     });
 
                     if (communityInfo.isClosed && response2.response !== null || !communityInfo.isClosed) {
-                        // sortingList.value = sorting
-                        // $onlyMine.checked = onlyMine == "true"
-                        // $pageSize.value = pageSize
-                
-                        // listWithTags.forEach(tagId => {
-                        //     const option = tagList.querySelector(`option[value="${tagId}"]`)
-                        //     if (option) {
-                        //         option.selected = true
-                        //     }
-                        // })
 
                 
                         const response = await getPosts(`${apiUrl}/community/${communityId}/post${document.location.search}`)
@@ -299,43 +300,6 @@ export class CommunityView extends View {
                             else {
                                 likeIcon.src = '/static/img/empty-like-icon.svg'
                             }
-
-                            // if (isAuthorized) {
-                            //     likeIcon.addEventListener('click', async () => {
-                            //         console.log('Добавлен слушатель на лайк:', element.id); 
-                            //         if (likeIcon.classList.contains('liked')) {
-                            //             try {
-                            //                 let response = await unlikePost(`${apiUrl}/post/${element.id}/like`)
-                            //                 if (response.isSuccess) {
-                            //                     likeIcon.classList.remove('liked')
-                            //                     likeIcon.src = '/static/img/empty-like-icon.svg'
-                            //                     likesCount.innerText = Number(likesCount.innerText) - 1
-                            //                 }
-                            //             }
-                            //             catch (err) {
-                            //                 console.log(err)
-                            //             }
-                            //         }
-                            //         else {
-                            //             try {
-                            //                 let response = await likePost(`${apiUrl}/post/${element.id}/like`)
-                            //                 if (response.isSuccess) {
-                            //                     likeIcon.classList.add('liked')
-                            //                     likeIcon.src = '/static/img/full-like-icon.svg'
-                            //                     likesCount.innerText = Number(likesCount.innerText) + 1
-                
-                            //                     likeIcon.classList.add('like-animation')
-                            //                     setTimeout(() => {
-                            //                         likeIcon.classList.remove('like-animation')
-                            //                     }, 500)
-                            //                 }
-                            //             }
-                            //             catch (err) {
-                            //                 console.log(err)
-                            //             }
-                            //         }
-                            //     })
-                            // }
                 
                             likes.appendChild(likesCount)
                             likes.appendChild(likeIcon)
@@ -410,19 +374,59 @@ export class CommunityView extends View {
                             addReadMore(post)
                         })
 
-                        const $pageSize = document.getElementById('pageSize')
-                        $pageSize.value = pageSize
-                        $pageSize.addEventListener('change', () => {
-                            const newUrl = new URL(window.location.href)
-                            newUrl.searchParams.set('page', 1)
-                            newUrl.searchParams.set('size', $pageSize.value)
-                            window.location.href = newUrl.toString()
-                        })
+                        const applyFiltersBtn = document.getElementById('apply-filters-btn')
+                        const sortingList = document.getElementById('sorting-list')
+                        const tagList = document.getElementById('tag-list')
+                        applyFiltersBtn.addEventListener('mousedown', (event) => event.preventDefault())
+                        applyFiltersBtn.addEventListener('click', async () => {
+                        const newUrl = new URL(window.location.href);
 
-                        listWithTags.forEach(tagId => {
-                            const option = tagList.querySelector(`option[value="${tagId}"]`)
-                            if (option) {
-                                option.selected = true
+                        newUrl.searchParams.set('sorting', sortingList.value)
+                
+                        newUrl.searchParams.delete('tags')
+                        const selectedTags = Array.from(tagList.selectedOptions).map(option => option.value)
+                        selectedTags.forEach(tag => newUrl.searchParams.append('tags', tag))
+                
+                        newUrl.searchParams.set('page', 1)
+                        window.history.pushState({}, '', newUrl.toString())
+                        window.router.loadPage(window.location.pathname, {
+                            page: 1,
+                            size: pageSize,
+                            sorting: sortingList.value,
+                            tags: selectedTags
+                        })
+                        })
+                    }
+
+                    const subunsubBtn = document.querySelector('.subunsub-btn')
+                    if (subunsubBtn) {
+                        subunsubBtn.addEventListener('mousedown', (event) => event.preventDefault())
+                        subunsubBtn.addEventListener('click', async () => {
+                            if (subunsubBtn.classList.contains('community__subscribe')) {
+                                try {
+                                    const response = await subscribe(`${apiUrl}/community/${communityId}/subscribe`)
+                                    if (response.isSuccess) {
+                                        subunsubBtn.classList.remove('community__subscribe')
+                                        subunsubBtn.classList.add('community__unsubscribe')
+                                        subunsubBtn.innerText = 'Отписаться'
+                                    }
+                                } 
+                                catch (err) {
+                                    console.log(err)
+                                }
+                            } 
+                            else if (subunsubBtn.classList.contains('community__unsubscribe')) {
+                                try {
+                                    const response = await unsubscribe(`${apiUrl}/community/${communityId}/unsubscribe`)
+                                    if (response.isSuccess) {
+                                        subunsubBtn.classList.remove('community__unsubscribe')
+                                        subunsubBtn.classList.add('community__subscribe')
+                                        subunsubBtn.innerText = 'Подписаться'
+                                    }
+                                } 
+                                catch (err) {
+                                    console.log(err)
+                                }
                             }
                         })
                     }
@@ -547,18 +551,30 @@ export class CommunityView extends View {
             arrowLeftBtn.addEventListener('mousedown', (event) => event.preventDefault())
             arrowLeftBtn.addEventListener('click', () => {
                 if (curPage > 1) {
-                    let newUrl = new URL(window.location.href)
+                    const newUrl = new URL(window.location.href)
                     newUrl.searchParams.set('page', curPage - 1)
-                    window.location.href = newUrl.toString()
+                    window.history.pushState({}, '', newUrl.toString())
+                    window.router.loadPage(window.location.pathname, {
+                        page: curPage - 1,
+                        size: pageSize,
+                        tags: listWithTags,
+                        sorting: sorting
+                    })
                 }
             })
     
             arrowRightBtn.addEventListener('mousedown', (event) => event.preventDefault())
             arrowRightBtn.addEventListener('click', () => {
                 if (curPage < pagesAmount) {
-                    let newUrl = new URL(window.location.href)
+                    const newUrl = new URL(window.location.href)
                     newUrl.searchParams.set('page', curPage + 1)
-                    window.location.href = newUrl.toString()
+                    window.history.pushState({}, '', newUrl.toString())
+                    window.router.loadPage(window.location.pathname, {
+                        page: parseInt(curPage) + 1,
+                        size: pageSize,
+                        tags: listWithTags,
+                        sorting: sorting
+                    })
                 }
             })
         }
@@ -575,10 +591,50 @@ export class CommunityView extends View {
             liEl.addEventListener('click', () => {
                 const newUrl = new URL(window.location.href)
                 newUrl.searchParams.set('page', pageNumber)
-                window.location.href = newUrl.toString()
+                window.history.pushState({}, '', newUrl.toString())
+                window.router.loadPage(window.location.pathname, {
+                    page: pageNumber,
+                    size: pageSize,
+                    tags: listWithTags,
+                    sorting: sorting
+                })
             })
     
             return liEl
+        }
+
+        async function displayQuery() {
+            const tagList = document.getElementById('tag-list')
+            if (tagList) {
+                listWithTags.forEach(tagId => {
+                    const option = tagList.querySelector(`option[value="${tagId}"]`)
+                    if (option) {
+                        option.selected = true
+                    }
+                })
+            }
+
+            const $pageSize = document.getElementById('pageSize')
+            if ($pageSize) {
+                $pageSize.value = pageSize
+                $pageSize.addEventListener('change', () => {
+                    const newUrl = new URL(window.location.href)
+                    newUrl.searchParams.set('page', 1)
+                    newUrl.searchParams.set('size', $pageSize.value)
+                    window.history.pushState({}, '', newUrl.toString())
+                    window.router.loadPage(window.location.pathname, {
+                        page: 1,
+                        size: $pageSize.value,
+                        tags: listWithTags,
+                        sorting: sorting
+                    })
+                })
+            }
+
+            const sortingList = document.getElementById('sorting-list')
+            if (sortingList) {
+                sortingList.value = sorting
+            }
         }
     }
 }

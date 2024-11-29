@@ -6,24 +6,24 @@ import { View } from "./view.js"
 export class LoginView extends View {
     async getHtml() {
         return `
-                <div class="form-container">
-                    <div class="head">Вход</div>
-                    <div class="credentials">
-                        <label for="email-input"><b>Email</b></label>
-                        <input type="text" placeholder="name@example.com" id="email-input" required>
+                <div class="form-cont">
+                    <div class="form-container">
+                        <div class="head">Вход</div>
+                        <div class="credentials">
+                            <label for="email-input"><b>Email</b></label>
+                            <input type="text" placeholder="name@example.com" id="email-input" required>
 
-                        <label for="password-input"><b>Пароль</b></label>
-                        <input type="password" placeholder="Введите пароль" id="password-input" required minlength="6">
+                            <label for="password-input"><b>Пароль</b></label>
+                            <input type="password" placeholder="Введите пароль" id="password-input" required minlength="6">
+                        </div>
+                        <button type="button" class="login-btn">Войти</button>
+                        <button type="button" id="registration">Зарегистрироваться</button>
                     </div>
-                    <button type="button" class="login-btn">Войти</button>
-                    <button type="button" id="registration">Зарегистрироваться</button>
                 </div>
         `
     }
 
     async runScript() {
-        const style = document.querySelector('link[rel="stylesheet"]')
-        style.href = '/static/css/login.css'
         const title = document.querySelector('title')
         title.innerText = 'Авторизация'
 

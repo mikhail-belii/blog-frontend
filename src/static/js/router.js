@@ -63,12 +63,42 @@ export function initRouter() {
 
     const initPath = window.location.pathname
     const initQueryParams = new URLSearchParams(window.location.search)
-    loadPage(initPath, Object.fromEntries(initQueryParams.entries()))
+    const queryParams = {}
+    for (const [key, value] of initQueryParams.entries()) {
+        if (queryParams[key]) {
+            if (Array.isArray(queryParams[key])) {
+                queryParams[key].push(value)
+            }
+            else {
+                queryParams[key] = [queryParams[key], value]
+            }
+        }
+        else {
+            queryParams[key] = value
+        }
+    }
+    
+    loadPage(initPath, queryParams)
 
     window.addEventListener('popstate', () => {
         const curPath = window.location.pathname
         const curQueryParams = new URLSearchParams(window.location.search)
-        loadPage(curPath, Object.fromEntries(curQueryParams.entries()))
+        const queryParams = {}
+        for (const [key, value] of curQueryParams.entries()) {
+            if (queryParams[key]) {
+                if (Array.isArray(queryParams[key])) {
+                    queryParams[key].push(value)
+                }
+                else {
+                    queryParams[key] = [queryParams[key], value]
+                }
+            }
+            else {
+                queryParams[key] = value
+            }
+        }
+    
+        loadPage(curPath, queryParams)
     })
 
     document.querySelectorAll('div[id]').forEach(link => {

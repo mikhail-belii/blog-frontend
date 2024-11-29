@@ -4,7 +4,13 @@
 }
 
 @blue: rgb(0, 102, 255);
+@gray: rgb(121, 121, 121);
 
+//MAIN
+//MAIN
+//MAIN
+//MAIN
+//MAIN
 body {
     padding: 0;
     margin: 0;
@@ -20,7 +26,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    display: flex;
+    display: none;
     z-index: 1;
     justify-content: center;
     align-items: center;
@@ -29,7 +35,7 @@ body {
 .grid-container {
     display: grid;
     grid-template-rows: 8vh auto 8vh;
-    min-height: 97vh;
+    min-height: 100vh;
 }
 
 .header-container {
@@ -44,6 +50,14 @@ body {
     align-items: center;
     margin-top: 2vh;
     gap: 2vh;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    margin-top: 3vh;
+    width: 80vw;
 }
 
 .footer-container {
@@ -68,39 +82,6 @@ body {
     cursor: default;
 }
 
-.head {
-    display: flex;
-    justify-items: left;
-    font-weight: bold;
-    font-size: 1.5vw;
-    cursor: default;
-}
-
-label {
-    opacity: 0.7;
-}
-
-button {
-    background-color: @blue;
-    color: white;
-    border: none;
-    padding: 1vh;
-    border-radius: 5px;
-    font-size: 1vw;
-    align-self: center;
-    padding-left: 1vw;
-    padding-right: 1vw;
-    margin-left: auto;
-    cursor: pointer;
-    transition: background 0.1s linear;
-    &:hover {
-        background-color: darken(@blue, 10%);
-    }
-    &:active {
-        background-color: darken(@blue, 20%);
-    }
-}
-
 input, select {
     height: 3vh;
     border: none;
@@ -112,7 +93,7 @@ input, select {
     padding-left: 0.5vw;
 }
 
-#home, #write-post, #authors {
+#home, #authors {
     cursor: pointer;
 }
 
@@ -190,6 +171,41 @@ input[type="checkbox"] {
 }
 select {
     outline: none;
+    border-radius: 5px;
+}
+
+label {
+    opacity: 0.7;
+    & > {
+        margin-bottom: 0.5vh;
+    }
+}
+
+//HOMEVIEW
+//HOMEVIEW
+//HOMEVIEW
+//HOMEVIEW
+//HOMEVIEW
+
+#postt, #apply-filters-btn {
+    background-color: @blue;
+    color: white;
+    border: none;
+    padding: 1vh;
+    border-radius: 5px;
+    font-size: 1vw;
+    align-self: center;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    margin-left: auto;
+    cursor: pointer;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
 }
 
 #postt {
@@ -261,13 +277,11 @@ select {
     grid-area: filters__apply-btn;
 }
 
-select {
-    border-radius: 5px;
-}
-
-label >  {
-    margin-bottom: 0.5vh;
-}
+//HOMEVIEW, COMMUNITYVIEW
+//HOMEVIEW, COMMUNITYVIEW
+//HOMEVIEW, COMMUNITYVIEW
+//HOMEVIEW, COMMUNITYVIEW
+//HOMEVIEW, COMMUNITYVIEW
 
 .posts {
     margin-top: 3vh;
@@ -401,4 +415,422 @@ label >  {
 .read-more-btn {
     cursor: pointer;
     color: @blue;
+}
+
+//COMMUNITYVIEW
+//COMMUNITYVIEW
+//COMMUNITYVIEW
+//COMMUNITYVIEW
+//COMMUNITYVIEW
+
+.write-post-btn {
+    margin: 1vw 1vw;
+}
+
+.admin {
+    display: flex;
+    width: 100%;
+    height: 8vh;
+    box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    cursor: default;
+    transition: background-color 0.2s ease;
+    align-items: center;
+}
+
+.admin__icon-container {
+    position: relative;
+}
+
+.admin__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4vw;
+    height: 6vh;
+}
+
+.admin__name {
+    font-weight: bold;
+}
+
+.subscribers{
+    img {
+        width: 2vw;
+        height: 2vh;
+    }
+}
+
+.main-info {
+    display: grid;
+    row-gap: 1vh;
+    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    & > *:not(.main-info__admins) {
+        padding-left: 1vw;
+    }
+}
+
+.main-info__admins__title {
+    font-size: 1.3vw;
+    font-weight: bold;
+    padding-left: 1vw;
+}
+
+.main-info__title{
+    span {
+        font-size: 2vw;
+        font-weight: bold;
+    }
+    div {
+        height: 3vh;
+        cursor: pointer;
+    }
+    display: flex;
+    justify-content: space-between;
+}
+
+.filters-min {
+    display: grid;
+    grid-template-areas: "head . . . . . . . ."
+                         "sorting sorting sorting tags tags tags tags tags tags"
+                         "sorting sorting sorting tags tags tags tags tags tags"
+                         ". . . . . . . . btn";
+    column-gap: 0.5vw;
+    row-gap: 1vh;
+    margin: 0 auto;
+    width: 80vw;
+}
+
+.filters-min__head {
+    grid-area: head;
+    font-weight: bold;
+}
+
+.filters-min__tag-search {
+    grid-area: tags;
+    display: flex;
+    flex-direction: column;
+    select {
+        height: 10vh;
+        font-size: inherit;
+    }
+}
+.filters-min__sorting {
+    grid-area: sorting;
+    display: flex;
+    flex-direction: column;
+    select {
+        font-size: inherit;
+    }
+}
+
+.filters-min__apply-btn {
+    grid-area: btn;
+    display: flex;
+    justify-content: center;
+}
+
+//COMMUNITYVIEW, COMMUNITIESVIEW
+//COMMUNITYVIEW, COMMUNITIESVIEW
+//COMMUNITYVIEW, COMMUNITIESVIEW
+//COMMUNITYVIEW, COMMUNITIESVIEW
+//COMMUNITYVIEW, COMMUNITIESVIEW
+
+.community__subscribe {
+    background-color: @blue;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
+}
+
+.community__unsubscribe {
+    background-color: red;
+    &:hover {
+        background-color: darken(red, 25%);
+    }
+    &:active {
+        background-color: darken(red, 30%);
+    }
+}
+
+.community__subscribe, .community__unsubscribe {
+    color: white;
+    padding: 0.5vh 0.5vw;
+    margin: 1vw 1vw;
+    z-index: 3;
+    border-radius: 5px;
+}
+
+//COMMUNITIESVIEW
+//COMMUNITIESVIEW
+//COMMUNITIESVIEW
+//COMMUNITIESVIEW
+//COMMUNITIESVIEW
+
+.communities-cont {
+    justify-items: center;
+}
+
+.community {
+    display: flex;
+    width: 60vw;
+    height: 7vh;
+    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 1vh 1vw;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.community:hover {
+    background-color: darken(white, 10%);
+}
+
+.community:active {
+    background-color: darken(white, 20%);
+}
+
+.community__name {
+    font-weight: bold;
+    font-size: 1.1vw;
+}
+
+//AUTHORSVIEW
+//AUTHORSVIEW
+//AUTHORSVIEW
+//AUTHORSVIEW
+//AUTHORSVIEW
+
+.authors-cont {
+    justify-items: center;
+}
+
+.author {
+    display: flex;
+    width: 60vw;
+    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 1vh 1vw;
+    justify-content: space-between;
+}
+
+.author:hover {
+    background-color: darken(white, 10%);
+}
+
+.author:active {
+    background-color: darken(white, 20%);
+}
+
+.author__head {
+    display: flex;
+    gap: 1vw;
+}
+
+.author__info {
+    display: flex;
+    flex-direction: row;
+}
+
+.author__icon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.author__add-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vw;
+    width: 20vw;
+}
+
+.author__icon-container {
+    position: relative;
+}
+
+.author__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6vw;
+    height: 8vh;
+}
+
+.author__icon-crown {
+    position: absolute;
+    top: 0;
+    right: auto;
+    width: 100%;
+    height: 100%;
+    transform: translate(-60%, -50%) rotate(-30deg);
+}
+
+.author__name {
+    font-weight: bold;
+}
+
+.author__create {
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.author__birthday__label {
+    opacity: 0.7;
+}
+
+.author__posts, .author__likes {
+    color: white;
+    background-color: @blue;
+    padding: 0.3vh 0.7vw;
+    border-radius: 5px;
+}
+
+//PROFILEVIEW
+//PROFILEVIEW
+//PROFILEVIEW
+//PROFILEVIEW
+//PROFILEVIEW
+
+.credentials {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    margin-bottom: 2vh;
+}
+
+#birthday-input {
+    font-size: inherit;
+    padding-top: 0.3vh;
+    padding-bottom: 0.3vh;
+}
+
+#sex-input {
+    font-size: inherit;
+    padding-top: 0.3vh;
+    padding-bottom: 0.3vh;
+    border-radius: 4px;
+    height: 4vh;
+}
+
+.write-post {
+    cursor: pointer;
+}
+
+#save-btn {
+    background-color: @blue;
+    color: white;
+    border: none;
+    padding: 1vh;
+    border-radius: 5px;
+    font-size: 1vw;
+    align-self: center;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    margin-left: auto;
+    cursor: pointer;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }   
+}
+
+//PROFILEVIEW, LOGINVIEW, REGISTRATIONVIEW
+//PROFILEVIEW, LOGINVIEW, REGISTRATIONVIEW
+//PROFILEVIEW, LOGINVIEW, REGISTRATIONVIEW
+//PROFILEVIEW, LOGINVIEW, REGISTRATIONVIEW
+//PROFILEVIEW, LOGINVIEW, REGISTRATIONVIEW
+
+.form-cont {
+    display: flex;
+    justify-content: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    width: 30vw;
+    box-shadow: 2px 2px 10px 1px rgba(0, 0, 0, 0.3);
+    padding: 2%;
+    border-radius: 5px;
+}
+
+//LOGINVIEW
+//LOGINVIEW
+//LOGINVIEW
+//LOGINVIEW
+//LOGINVIEW
+
+.head {
+    display: flex;
+    justify-items: left;
+    font-weight: bold;
+    cursor: default;
+    font-size: 1.5vw;
+}
+
+.login-btn, #registration {
+    color: white;
+    border: none;
+    padding: 1vh;
+    border-radius: 5px;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: background 0.1s linear;
+}
+
+.login-btn {
+    background-color: @blue;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
+}
+
+#registration {
+    background-color: @gray;
+    &:hover {
+        background-color: darken(@gray, 10%);
+    }
+    &:active {
+        background-color: darken(@gray, 20%);
+    }
+}
+
+//REGISTRATIONVIEW
+//REGISTRATIONVIEW
+//REGISTRATIONVIEW
+//REGISTRATIONVIEW
+//REGISTRATIONVIEW
+
+.reg-btn {
+    background-color: @blue;
+    color: white;
+    border: none;
+    padding: 1vh;
+    border-radius: 5px;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
 }

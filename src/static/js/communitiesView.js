@@ -10,8 +10,6 @@ export class CommunitiesView extends View {
     }
 
     async runScript() {
-        const style = document.querySelector('link[rel="stylesheet"]')
-        style.href = '/static/css/communities.css'
         const title = document.querySelector('title')
         title.innerText = 'Сообщества'
         const homeRdrct = document.getElementById('home')
@@ -130,10 +128,12 @@ export class CommunitiesView extends View {
                                             communityBtn.classList.add('community__unsubscribe')
                                             communityBtn.innerText = 'Отписаться'
                                         }
-                                    } catch (err) {
+                                    } 
+                                    catch (err) {
                                         console.log(err)
                                     }
-                                } else if (communityBtn.classList.contains('community__unsubscribe')) {
+                                } 
+                                else if (communityBtn.classList.contains('community__unsubscribe')) {
                                     try {
                                         const response = await unsubscribe(`${apiUrl}/community/${element.id}/unsubscribe`)
                                         if (response.isSuccess) {
@@ -141,7 +141,8 @@ export class CommunitiesView extends View {
                                             communityBtn.classList.add('community__subscribe')
                                             communityBtn.innerText = 'Подписаться'
                                         }
-                                    } catch (err) {
+                                    } 
+                                    catch (err) {
                                         console.log(err)
                                     }
                                 }
@@ -155,7 +156,8 @@ export class CommunitiesView extends View {
                             communitiesCont.appendChild(community)
                         })
                     }
-                } else {
+                } 
+                else {
                     const response = await getCommunities(`${apiUrl}/community`)
                     if (response.isSuccess) {
                         const communities = response.response
@@ -179,7 +181,8 @@ export class CommunitiesView extends View {
                         })
                     }
                 }
-            } catch (err) {
+            } 
+            catch (err) {
                 console.log(err)
             }
         }
