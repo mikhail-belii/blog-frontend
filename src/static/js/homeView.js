@@ -71,7 +71,7 @@ export class HomeView extends View {
         `
     }
 
-    async runScript() {
+    async runScript(params) {
         const style = document.querySelector('link[rel="stylesheet"]')
         style.href = '/static/css/index.css'
         const title = document.querySelector('title')
@@ -102,15 +102,14 @@ export class HomeView extends View {
         const $onlyMine = document.getElementById('only-mine')
         var isAuthorized = false
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let curPage = parseInt(urlParams.get('page')) || 1
-        let pageSize = parseInt(urlParams.get('size')) || 5
-        let listWithTags = urlParams.getAll('tags') || []
-        let author = urlParams.get('author') || null
-        let sorting = urlParams.get('sorting') || 'CreateDesc'
-        let min = parseInt(urlParams.get('min')) || null
-        let max = parseInt(urlParams.get('max')) || null
-        let onlyMine = urlParams.get('onlyMyCommunities') || false
+        let curPage = parseInt(params.page) || 1
+        let pageSize = parseInt(params.size) || 5
+        let listWithTags = params.tags || []
+        let sorting = params.sorting || 'CreateDesc'
+        let min = parseInt(params.min) || null
+        let max = parseInt(params.max) || null
+        let onlyMine = params.onlyMine || false
+        let author = params.author || ''
 
         await refreshData()
 
@@ -130,10 +129,20 @@ export class HomeView extends View {
         })
 
         $pageSize.addEventListener('change', () => {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('page', 1);
-        newUrl.searchParams.set('size', $pageSize.value);
-        window.location.href = newUrl.toString();
+            const newUrl = new URL(window.location.href)
+            newUrl.searchParams.set('page', 1)
+            newUrl.searchParams.set('size', $pageSize.value)
+            window.history.pushState({}, '', newUrl.toString())
+            window.router.loadPage(window.location.pathname, {
+                page: 1,
+                size: $pageSize.value,
+                tags: listWithTags,
+                sorting: sorting,
+                min: min,
+                max: max,
+                onlyMine: onlyMine,
+                author: author
+            })
         })
 
         applyFiltersBtn.addEventListener('mousedown', (event) => event.preventDefault())
@@ -170,7 +179,17 @@ export class HomeView extends View {
         selectedTags.forEach(tag => newUrl.searchParams.append('tags', tag))
 
         newUrl.searchParams.set('page', 1)
-        window.location.href = newUrl.toString();
+        window.history.pushState({}, '', newUrl.toString())
+        window.router.loadPage(window.location.pathname, {
+            page: 1,
+            size: $pageSize.value,
+            tags: selectedTags,
+            sorting: sortingList.value,
+            min: minTime.value,
+            max: maxTime.value,
+            onlyMine: $onlyMine.checked,
+            author: authorName.value
+        })
         })
 
         async function refreshData() {
@@ -293,7 +312,17 @@ export class HomeView extends View {
             if (curPage > 1) {
                 let newUrl = new URL(window.location.href)
                 newUrl.searchParams.set('page', curPage - 1)
-                window.location.href = newUrl.toString()
+                window.history.pushState({}, '', newUrl.toString())
+                window.router.loadPage(window.location.pathname, {
+                    page: curPage - 1,
+                    size: pageSize,
+                    tags: listWithTags,
+                    sorting: sorting,
+                    min: min,
+                    max: max,
+                    onlyMine: onlyMine,
+                    author: author
+                })
             }
         })
 
@@ -302,7 +331,17 @@ export class HomeView extends View {
             if (curPage < pagesAmount) {
                 let newUrl = new URL(window.location.href)
                 newUrl.searchParams.set('page', curPage + 1)
-                window.location.href = newUrl.toString()
+                window.history.pushState({}, '', newUrl.toString())
+                window.router.loadPage(window.location.pathname, {
+                    page: curPage + 1,
+                    size: pageSize,
+                    tags: listWithTags,
+                    sorting: sorting,
+                    min: min,
+                    max: max,
+                    onlyMine: onlyMine,
+                    author: author
+                })
             }
         })
         }
@@ -319,7 +358,17 @@ export class HomeView extends View {
         liEl.addEventListener('click', () => {
             const newUrl = new URL(window.location.href)
             newUrl.searchParams.set('page', pageNumber)
-            window.location.href = newUrl.toString()
+            window.history.pushState({}, '', newUrl.toString())
+            window.router.loadPage(window.location.pathname, {
+                page: pageNumber,
+                size: pageSize,
+                tags: listWithTags,
+                sorting: sorting,
+                min: min,
+                max: max,
+                onlyMine: onlyMine,
+                author: author
+            })
         })
 
         return liEl
