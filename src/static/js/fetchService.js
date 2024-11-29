@@ -409,3 +409,52 @@ export async function getUsersRole(url) {
         throw err
     }
 }
+
+export async function getPost(url) {
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${getToken()}`
+            }
+        })
+
+        let resp = new Response()
+        resp.isSuccess = true
+
+        if (!response.ok) {
+            resp.isSuccess = response.status
+            return resp
+        }
+    
+        const data = await response.json()
+        resp.response = data
+        return resp
+    }
+    catch (err) {
+        throw err
+    }
+}
+
+export async function getAddressChain(url) {
+    try {
+        const response = await fetch(url, {
+            method: "GET"
+        })
+
+        let resp = new Response()
+        resp.isSuccess = true
+
+        if (!response.ok) {
+            resp.isSuccess = false
+            return resp
+        }
+    
+        const data = await response.json()
+        resp.response = data
+        return resp
+    }
+    catch (err) {
+        throw err
+    }
+}

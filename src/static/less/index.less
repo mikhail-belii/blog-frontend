@@ -53,8 +53,7 @@ body {
 }
 
 .main-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 3vh;
     margin-top: 3vh;
     width: 80vw;
@@ -832,5 +831,27 @@ label {
     }
     &:active {
         background-color: darken(@blue, 20%);
+    }
+}
+
+//POSTVIEW
+//POSTVIEW
+//POSTVIEW
+//POSTVIEW
+//POSTVIEW
+
+.post-cont {
+    display: grid;
+    width: 50vw;
+    justify-self: center;
+}
+
+.post__geo {
+    display: flex;
+    align-items: center;
+    img {
+        height: 2.5vh;
+        cursor: pointer;
+        margin-right: 0.5vw;
     }
 }

@@ -72,8 +72,6 @@ export class HomeView extends View {
     }
 
     async runScript(params) {
-        const style = document.querySelector('link[rel="stylesheet"]')
-        style.href = '/static/css/index.css'
         const title = document.querySelector('title')
         title.innerText = 'Главная'
         const homeRdrct = document.getElementById('home')

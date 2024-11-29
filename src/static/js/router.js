@@ -3,6 +3,7 @@ import { CommunitiesView } from "./communitiesView.js"
 import { CommunityView } from "./communityView.js"
 import { HomeView } from "./homeView.js"
 import { LoginView } from "./loginView.js"
+import { PostView } from "./postView.js"
 import { ProfileView } from "./profileView.js"
 import { RegistrationView } from "./registrationView.js"
 
@@ -15,7 +16,8 @@ export function initRouter() {
         '/registration': new RegistrationView(),
         '/authors': new AuthorsView(),
         '/communities': new CommunitiesView(),
-        '/communities/:id': new CommunityView()
+        '/communities/:id': new CommunityView(),
+        '/post/:id': new PostView()
     };
 
     const appContainer = document.getElementById('app')
