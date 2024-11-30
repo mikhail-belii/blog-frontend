@@ -526,6 +526,27 @@ export class HomeView extends View {
         });
 
         displayPagination(response.response.pagination.count)
+
+        document.querySelectorAll('.post__title').forEach(element => {
+            element.addEventListener('click', () => {
+                const parentDiv = element.closest('div[id]')
+                if (parentDiv) {
+                    window.history.pushState({}, '', `/post/${parentDiv.id}`)
+                    window.router.loadPage(`/post/${parentDiv.id}`)
+                }
+            })
+        })
+
+        document.querySelectorAll('.post__comments').forEach(element => {
+            element.addEventListener('click', () => {
+                const commentsAmount = element.firstElementChild.textContent
+                const parentDiv = element.closest('div[id]')
+                if (parentDiv) {
+                    window.history.pushState({}, '', `/post/${parentDiv.id}`)
+                    window.router.loadPage(`/post/${parentDiv.id}`, {isScrolled: commentsAmount > 0})
+                }
+            })
+        })
         }
 
         function addReadMore(post) {

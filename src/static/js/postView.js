@@ -1,5 +1,5 @@
 import { apiUrl } from "./constants.js";
-import { getAddressChain, getPost, getProfile, likePost, logout, unlikePost } from "./fetchService.js";
+import { addComment, deleteComment, editComment, getAddressChain, getCommentChain, getPost, getProfile, likePost, logout, unlikePost } from "./fetchService.js";
 import { View } from "./view.js";
 
 
@@ -33,6 +33,7 @@ export class PostView extends View {
         var postId = params.id
         
         var isAuthorized = false
+        var userId = null
         const postCont = document.querySelector('.post-cont')
         const $post = document.querySelector('.post')
 
@@ -70,9 +71,10 @@ export class PostView extends View {
                         userEmail.style.display = 'block'
                         userEmailText.innerText = response.response.email
                         isAuthorized = true
+                        userId = response.response.id
                     }
     
-                    loadPost()
+                    await loadPost()
                 }
                 catch(err) {
                     console.log(err)
@@ -240,8 +242,89 @@ export class PostView extends View {
                     likes.appendChild(likeIcon)
                     postFooter.appendChild(likes)
                     $post.appendChild(postFooter)
-        
                     $post.id = postId
+
+                    if (post.comments.length !== 0) {
+                        const commentsCont = document.createElement('div')
+                        commentsCont.classList.add('post__comments-cont')
+                        const commentsContTitle = document.createElement('span')
+                        commentsContTitle.classList.add('post__comments-cont__title')
+                        commentsContTitle.innerHTML = 'Комментарии'
+                        commentsCont.appendChild(commentsContTitle)
+                        
+                        const commentsList = document.createElement('ul')
+                        commentsList.classList.add('post__comments-list')
+                        post.comments.forEach(async element => {
+                            const $comment = buildComment(element)
+                            if (element.subComments > 0) {
+                                try {
+                                    const response = await getCommentChain(`${apiUrl}/comment/${element.id}/tree`)
+                                    if (response.isSuccess) {
+                                        const openReplies = document.createElement('div')
+                                        openReplies.classList.add('post__comment__open-replies')
+                                        openReplies.innerText = 'Раскрыть ответы'
+                                        $comment.appendChild(openReplies)
+                                        const subcommentsList = document.createElement('ul')
+                                        subcommentsList.classList.add('post__subcomments-list')
+                                        response.response.forEach(subcomment => {
+                                            const $subcomment = buildComment(subcomment)
+                                            subcommentsList.appendChild($subcomment)
+                                        })
+                                        $comment.appendChild(subcommentsList)
+                                        openReplies.addEventListener('click', () => {
+                                            if (subcommentsList.classList.contains('opened')) {
+                                                subcommentsList.style.display = 'none'
+                                                subcommentsList.classList.remove('opened')
+                                                openReplies.innerText = 'Раскрыть ответы'
+                                            }
+                                            else {
+                                                subcommentsList.style.display = 'flex'
+                                                subcommentsList.classList.add('opened')
+                                                openReplies.innerText = 'Скрыть ответы'
+                                            }
+                                        })
+                                    }
+                                }
+                                catch (err) {
+                                    console.log(err)
+                                }
+                            }
+
+                            commentsList.appendChild($comment)
+                        })
+                        commentsCont.appendChild(commentsList)
+                        postCont.appendChild(commentsCont)
+                    }
+
+                    if (isAuthorized) {
+                        const writeComment = document.createElement('div')
+                        writeComment.classList.add('post__write-comment-cont')
+                        const writeCommentTitle = document.createElement('span')
+                        writeCommentTitle.innerText = 'Оставьте комментарий'
+                        writeComment.appendChild(writeCommentTitle)
+                        const writeCommentArea = document.createElement('textarea')
+                        writeComment.appendChild(writeCommentArea)
+                        const sendComment = document.createElement('div')
+                        sendComment.innerText = 'Отправить'
+                        sendComment.addEventListener('click', async () => {
+                            const commentContent = writeCommentArea.value
+                            try {
+                                const response = await addComment(`${apiUrl}/post/${postId}/comment`, JSON.stringify({
+                                    content: commentContent,
+                                    parentId: null
+                                }))
+                                if (response.isSuccess) {
+                                    //!!!!!!!!!!!!!
+                                    window.router.loadPage(`/post/${postId}`)
+                                }
+                            }
+                            catch (err) {
+                                console.log(err)
+                            }
+                        })
+                        writeComment.appendChild(sendComment)
+                        postCont.appendChild(writeComment)
+                    }
                 }
             }
             catch (err) {
@@ -259,6 +342,204 @@ export class PostView extends View {
             const minutes = date.getMinutes().toString().padStart(2, '0')
             const formatted = `${day}.${month}.${year} ${hours}:${minutes}`
             return formatted
+        }
+
+        function buildComment(element) {
+            const $comment = document.createElement('li')
+            $comment.classList.add('post__comment')
+            const $commentTitle = document.createElement('div')
+            $commentTitle.classList.add('post__comment__title')
+            const authorName = document.createElement('span')
+            authorName.innerText = element.content !== ''? element.author: '[Комментарий удален]'
+            $commentTitle.appendChild(authorName)
+            let commentEdit = null
+            let commentDelete = null
+            let editCont = null
+            let replyCont = null
+            let $commentFooterReply = null
+            if (element.authorId === userId && element.content !== '') {
+                commentEdit = document.createElement('img')
+                commentEdit.src = '/static/img/pencil-icon.svg'
+                $commentTitle.appendChild(commentEdit)
+                commentDelete = document.createElement('img')
+                commentDelete.src = '/static/img/dustbin-icon.svg'
+                $commentTitle.appendChild(commentDelete)
+            }
+            $comment.appendChild($commentTitle)
+            
+            const $commentContent = document.createElement('span')
+            $commentContent.innerText = element.content !== ''? element.content: '[Комментарий удален]'
+            let comment = element.content !== ''? element.content: '[Комментарий удален]'
+            if (element.content !== '' && element.modifiedDate !== null) {
+                const $commentChanged = document.createElement('span')
+                $commentChanged.classList.add('post__comment-changed')
+                $commentChanged.innerText = ' (изменен)'
+                const $commentChangedInfo = document.createElement('div')
+                $commentChangedInfo.classList.add('post__comment-changed__info')
+                $commentChangedInfo.innerHTML = `
+                                                <div>${formatDate(element.createTime)}</div>
+                                                <div>Изменено: ${formatDate(element.modifiedDate)}</div>
+                                                `
+                $commentChanged.appendChild($commentChangedInfo)
+                $commentContent.appendChild($commentChanged)
+            }
+            $comment.appendChild($commentContent)
+
+            const $commentFooter = document.createElement('div')
+            const $commentFooterDate = document.createElement('span')
+            $commentFooterDate.innerText = formatDate(element.createTime)
+            $commentFooter.appendChild($commentFooterDate)
+            if (element.content !== '' && isAuthorized) {
+                $commentFooterReply = document.createElement('span')
+                $commentFooterReply.classList.add('post__comment__footer-reply')
+                $commentFooterReply.innerText = ' Ответить'
+
+                $commentFooter.appendChild($commentFooterReply)
+            }
+            $comment.appendChild($commentFooter)
+
+            if (commentEdit !== null) {
+                commentEdit.addEventListener('click', () => {
+                    if (editCont) {
+                        editCont.remove()
+                        editCont = null
+                    }
+                    const originalContent = comment
+                    const originalCommentChanged = $commentContent.querySelector('.post__comment-changed')
+
+                    editCont = document.createElement('div')
+                    editCont.classList.add('post__comment__edit-cont')
+                    const editInput = document.createElement('input')
+                    editInput.value = comment
+                    const cancelEdit = document.createElement('div')
+                    cancelEdit.classList.add('post__comment__edit-cont__cancel')
+                    cancelEdit.innerText = 'Отменить'
+                    cancelEdit.addEventListener('click', () => {
+                        editCont.remove()
+                        editCont = null
+                        $commentContent.innerText = originalContent
+                        if (originalCommentChanged) {
+                            $commentContent.appendChild(originalCommentChanged)
+                        }
+                        $commentContent.style.display = 'inline'
+                    })
+                    const applyEdit = document.createElement('div')
+                    applyEdit.classList.add('post__comment__edit-cont__apply')
+                    applyEdit.innerText = 'Редактировать'
+                    applyEdit.addEventListener('click', async () => {
+                        const content = editInput.value
+                        try {
+                            const response = await editComment(`${apiUrl}/comment/${element.id}`, JSON.stringify({content: content}))
+                            if (response.isSuccess) {
+                                $commentContent.innerText = content
+                                comment = content
+                                if (originalCommentChanged) {
+                                    originalCommentChanged.remove()
+                                }
+                                const $commentChanged = document.createElement('span')
+                                $commentChanged.classList.add('post__comment-changed')
+                                $commentChanged.innerText = ' (изменен)'
+                                const $commentChangedInfo = document.createElement('div')
+                                $commentChangedInfo.classList.add('post__comment-changed__info')
+                                $commentChangedInfo.innerHTML = `
+                                    <div>${formatDate(element.createTime)}</div>
+                                    <div>Изменено: ${formatDate(new Date())}</div>
+                                `
+                                $commentChanged.appendChild($commentChangedInfo)
+                                $commentContent.appendChild($commentChanged)
+                                editCont.remove()
+                                editCont = null
+                                $commentContent.style.display = 'inline'
+                            }
+                        }
+                        catch (err) {
+                            console.log(err)
+                        }
+                    })
+                    editCont.appendChild(editInput)
+                    editCont.appendChild(cancelEdit)
+                    editCont.appendChild(applyEdit)
+                    $comment.insertBefore(editCont, $commentContent.nextSibling)
+                    $commentContent.style.display = 'none'
+                })
+            }
+
+            if (commentDelete !== null) {
+                commentDelete.addEventListener('click', async () => {
+                    try {
+                        const response = await deleteComment(`${apiUrl}/comment/${element.id}`)
+                        if (response.isSuccess) {
+                            $comment.remove()
+                            document.querySelector('.post__comments').querySelector('span').innerText = 
+                                parseInt(document.querySelector('.post__comments').querySelector('span').innerText) - 1
+                        }
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+                })
+            }
+
+            if ($commentFooterReply !== null) {
+                $commentFooterReply.addEventListener('click', () => {
+                    if (replyCont !== null) {
+                        replyCont.remove()
+                        replyCont = null
+                    }
+                    replyCont = document.createElement('div')
+                    replyCont.classList.add('post__comment__reply-cont')
+                    const replyInput = document.createElement('input')
+                    replyInput.placeholder = 'Оставьте комментарий...'
+                    const cancelReply = document.createElement('div')
+                    cancelReply.classList.add('post__comment__reply-cont__cancel')
+                    cancelReply.innerText = 'Отменить'
+                    cancelReply.addEventListener('click', () => {
+                        replyCont.remove()
+                        replyCont = null
+                    })
+                    const applyReply = document.createElement('div')
+                    applyReply.classList.add('post__comment__reply-cont__apply')
+                    applyReply.innerText = 'Отправить'
+                    applyReply.addEventListener('click', async () => {
+                        const replyContent = replyInput.value
+                        try {
+                            const response = await addComment(`${apiUrl}/post/${postId}/comment`, JSON.stringify({
+                                content: replyContent,
+                                parentId: element.id
+                            }))
+                            if (response.isSuccess) {
+                                replyCont.remove()
+                                replyCont = null
+                                //!!!!!!!!!!!!!
+                                window.router.loadPage(`/post/${postId}`)
+                            }
+                        }
+                        catch (err) {
+                            console.log(err)
+                        }
+                    })
+                    replyCont.appendChild(replyInput)
+                    replyCont.appendChild(cancelReply)
+                    replyCont.appendChild(applyReply)
+                    $comment.appendChild(replyCont)
+                }
+            )}
+
+            return $comment
+        }
+
+        const isScrolled = params.isScrolled
+        if (isScrolled) {
+            const observer = new MutationObserver(() => {
+                const commentsCont = document.querySelector('.post__comments-cont')
+                if (commentsCont) {
+                    const commentsY = commentsCont.getBoundingClientRect().y
+                    window.scrollBy(0, commentsY)
+                    observer.disconnect()
+                }
+            })
+        
+            observer.observe(document.body, { childList: true, subtree: true })
         }
     }
 }

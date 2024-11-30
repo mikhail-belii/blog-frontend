@@ -135,6 +135,7 @@ input, select {
     position: absolute;
     width: 5vw;
     height: 5vw;
+    top: 30%;
     
     & .path {
       stroke: hsl(210, 100%, 72%);
@@ -302,6 +303,7 @@ label {
 .post__title {
     font-weight: bold;
     font-size: 1.5vw;
+    cursor: pointer;
 }
 
 .post__title, .post__description{
@@ -854,4 +856,181 @@ label {
         cursor: pointer;
         margin-right: 0.5vw;
     }
+}
+
+.post__comments-cont {
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    margin-top: 2vh;
+    padding: 2vh;
+}
+
+.post__comments-cont__title {
+    font-size: 1.3vw;
+    font-weight: bold;
+}
+
+.post__comments-list {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    padding: 0;
+    gap: 1.7vh;
+}
+
+.post__subcomments-list {
+    display: none;
+    flex-direction: column;
+    list-style-type: none;
+    padding: 0;
+    gap: 1.7vh;
+    border-left: 0.2vw solid @blue;
+}
+
+.post__comment {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 1vh;
+}
+
+.post__comment div img {
+    height: 1vw;
+    cursor: pointer;
+    margin-left: 0.3vw;
+    margin-right: 0.3vw;
+}
+
+.post__comment div input {
+    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+.post__comment__title {
+    font-size: 0.8vw;
+    display: flex;
+    align-items: center;
+    & > span {
+        cursor: default;
+    }
+}
+
+.post__comment-changed {
+    &:hover .post__comment-changed__info{
+        display: block;
+    }
+    cursor: default;
+    position: relative;
+    color: @gray;
+}
+
+.post__comment-changed__info {
+    display: none;
+    position: absolute;
+    width: 10vw;
+    right: 0;
+    z-index: 1;
+    font-size: 0.7vw;
+    background-color: darken(#f1f1f1, 5%);
+    color: black;
+    border: 0.1vh solid rgba(0, 0, 0, 0.2);
+}
+
+.post__comment__footer-reply, .post__comment__open-replies {
+    color: @blue;
+    cursor: pointer;
+}
+
+.post__comment__edit-cont {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+}
+
+.post__comment__edit-cont__cancel {
+    background-color: @gray;
+    color: white;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@gray, 5%);
+    }
+}
+
+.post__comment__edit-cont__apply {
+    background-color: darken(gold, 5%);
+    color: black;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(gold, 10%);
+    }
+}
+
+.post__comment__edit-cont__cancel, .post__comment__edit-cont__apply {
+    
+    padding: 0.5vh 1vh;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.post__comment__reply-cont {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    input {
+        width: 20vw;
+    }
+}
+
+.post__comment__reply-cont__cancel {
+    background-color: @gray;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@gray, 5%);
+    }
+}
+
+.post__comment__reply-cont__apply {
+    background-color: @blue;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+}
+
+.post__comment__reply-cont__cancel, .post__comment__reply-cont__apply {
+    color: white;
+    padding: 0.5vh 1vh;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.post__write-comment-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    margin-top: 2vh;
+    padding: 2vh;
+
+    div {
+        width: fit-content;
+        color: white;
+        padding: 0.5vh 1vh;
+        cursor: pointer;
+        border-radius: 3px;
+        align-self: flex-end;
+        background-color: @blue;
+        transition: background 0.1s linear;
+        &:hover {
+            background-color: darken(@blue, 10%);
+        }
+    }
+}
+
+textarea {
+    resize: none;
+    height: 20vh;
+    font-family: inherit;
 }
