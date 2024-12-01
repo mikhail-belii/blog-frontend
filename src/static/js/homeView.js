@@ -77,7 +77,7 @@ export class HomeView extends View {
         const homeRdrct = document.getElementById('home')
         const authorsRdrct = document.getElementById('authors')
         const communitiesRdrct = document.getElementById('communities')
-        const writePostRdrct = document.getElementById('post')
+        const writePostRdrct = document.getElementById('post/create')
         const loginRdrct = document.getElementById('login')
         const userEmail = document.querySelector('.user-email')
         homeRdrct.style.display = 'block'
@@ -87,8 +87,6 @@ export class HomeView extends View {
 
         const writePostBtn = document.getElementById('postt')
         const userEmailText = document.querySelector('.user-email-text')
-        const logoutBtn = document.querySelector('.logout')
-        
 
         const tagList = document.getElementById('tag-list')
         const $pageSize = document.getElementById('pageSize')
@@ -111,19 +109,10 @@ export class HomeView extends View {
 
         await refreshData()
 
-        logoutBtn.addEventListener('mousedown', (event) => event.preventDefault())
-        logoutBtn.addEventListener('click', async () => {
-        try {
-            const response = await logout(`${apiUrl}/account/logout`)
-            if (response.isSuccess) {
-                window.history.pushState({}, '', '/')
-                window.router.loadPage('/')
-                return
-            }
-        }
-        catch (err) {
-            console.log(err)
-        }
+        writePostBtn.addEventListener('mousedown', (event) => event.preventDefault())
+        writePostBtn.addEventListener('click', () => {
+            window.history.pushState({}, '', '/post/create')
+            window.router.loadPage('/post/create')
         })
 
         $pageSize.addEventListener('change', () => {

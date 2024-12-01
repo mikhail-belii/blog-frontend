@@ -1,6 +1,7 @@
 import { AuthorsView } from "./authorsView.js"
 import { CommunitiesView } from "./communitiesView.js"
 import { CommunityView } from "./communityView.js"
+import { CreatePostView } from "./createPostView.js"
 import { HomeView } from "./homeView.js"
 import { LoginView } from "./loginView.js"
 import { PostView } from "./postView.js"
@@ -17,7 +18,8 @@ export function initRouter() {
         '/authors': new AuthorsView(),
         '/communities': new CommunitiesView(),
         '/communities/:id': new CommunityView(),
-        '/post/:id': new PostView()
+        '/post/:id': new PostView(),
+        '/post/create': new CreatePostView()
     };
 
     const appContainer = document.getElementById('app')
@@ -29,7 +31,7 @@ export function initRouter() {
         let params = {}
 
         if (routes[path]) {
-            view = routes[path];
+            view = routes[path]
         }
         else {
             for (const route in routes) {

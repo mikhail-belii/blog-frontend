@@ -15,7 +15,7 @@ export class AuthorsView extends View {
         const homeRdrct = document.getElementById('home')
         const authorsRdrct = document.getElementById('authors')
         const communitiesRdrct = document.getElementById('communities')
-        const writePostRdrct = document.getElementById('post')
+        const writePostRdrct = document.getElementById('post/create')
         const loginRdrct = document.getElementById('login')
         const userEmail = document.querySelector('.user-email')
         homeRdrct.style.display = 'block'
@@ -24,25 +24,9 @@ export class AuthorsView extends View {
         writePostRdrct.style.display = 'none'
 
         const userEmailText = document.querySelector('.user-email-text')
-        const logoutBtn = document.querySelector('.logout')
         const authorsCont = document.querySelector('.authors-cont')
     
         await refreshData()
-
-        logoutBtn.addEventListener('mousedown', (event) => event.preventDefault())
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                const response = await logout(`${apiUrl}/account/logout`)
-                if (response.isSuccess) {
-                    window.history.pushState({}, '', '/')
-                    window.router.loadPage('/')
-                    return
-                }
-            }
-            catch (err) {
-                console.log(err)
-            }
-        })
     
         async function refreshData() {
             const preloader = document.querySelector('.spinner')

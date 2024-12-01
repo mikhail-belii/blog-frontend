@@ -55,7 +55,7 @@ export class RegistrationView extends View {
         const homeRdrct = document.getElementById('home')
         const authorsRdrct = document.getElementById('authors')
         const communitiesRdrct = document.getElementById('communities')
-        const writePostRdrct = document.getElementById('post')
+        const writePostRdrct = document.getElementById('post/create')
         const loginRdrct = document.getElementById('login')
         const userEmail = document.querySelector('.user-email')
         homeRdrct.style.display = 'block'

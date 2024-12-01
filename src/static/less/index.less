@@ -425,7 +425,21 @@ label {
 //COMMUNITYVIEW
 
 .write-post-btn {
+    cursor: pointer;
     margin: 1vw 1vw;
+    padding: 1vh;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    background-color: @blue;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
 }
 
 .admin {
@@ -1033,4 +1047,118 @@ textarea {
     resize: none;
     height: 20vh;
     font-family: inherit;
+}
+
+//CREATEPOSTVIEW
+//CREATEPOSTVIEW
+//CREATEPOSTVIEW
+//CREATEPOSTVIEW
+//CREATEPOSTVIEW
+
+.write-post-cont {
+    display: grid;
+    grid-template-areas: 'title title . .'
+                         'name name name time'
+                         'community community tags tags'
+                         '. . tags tags'
+                         'image image image image'
+                         'text text text text'
+                         'text text text text'
+                         'text text text text'
+                         'address-title . . .'
+                         'address address address address'
+                         '. . . button';
+    width: 60vw;
+    column-gap: 0.5vw;
+    row-gap: 1.5vh;
+    align-items: center;
+    margin: 0 auto;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    padding: 1vw;
+    & > div > input, select {
+        box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+        height: 4vh;
+    }
+}
+
+.write-post-cont__title {
+    grid-area: title;
+    font-weight: bold;
+    font-size: 1.5vw;
+}
+
+.write-post-cont__name {
+    grid-area: name;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__reading-time {
+    grid-area: time;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__community {
+    grid-area: community;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__tag-list {
+    grid-area: tags;
+    display: flex;
+    flex-direction: column;
+    select {
+        height: 10vh;
+        font-size: inherit;
+    }
+}
+
+.write-post-cont__image {
+    grid-area: image;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__content {
+    grid-area: text;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__address__title {
+    grid-area: address-title;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    font-size: 1.2vw;
+}
+
+.write-post-cont__address {
+    grid-area: address;
+    display: flex;
+    flex-direction: column;
+}
+
+.write-post-cont__create-post {
+    grid-area: button;
+    display: flex;
+    justify-self: flex-end;
+    background-color: @blue;
+    color: white;
+    padding: 0.8vh;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    margin-top: 1vh;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.1s linear;
+    &:hover {
+        background-color: darken(@blue, 10%);
+    }
+    &:active {
+        background-color: darken(@blue, 20%);
+    }
 }

@@ -43,7 +43,6 @@ export class ProfileView extends View {
         const emailInput = document.getElementById('email-input')
         const saveBtn = document.getElementById('save-btn')
         const userEmailText = document.querySelector('.user-email-text')
-        const logoutBtn = document.querySelector('.logout')
         var mask = IMask(phoneInput, {
             mask: '+7(000)000-00-00'
         })
@@ -53,7 +52,7 @@ export class ProfileView extends View {
         const homeRdrct = document.getElementById('home')
         const authorsRdrct = document.getElementById('authors')
         const communitiesRdrct = document.getElementById('communities')
-        const writePostRdrct = document.getElementById('post')
+        const writePostRdrct = document.getElementById('post/create')
         const loginRdrct = document.getElementById('login')
         const userEmail = document.querySelector('.user-email')
         homeRdrct.style.display = 'block'
@@ -96,23 +95,6 @@ export class ProfileView extends View {
             
         })
     
-        logoutBtn.addEventListener('mousedown', (event) => {
-            event.preventDefault()
-        })
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                const response = await logout(`${apiUrl}/account/logout`)
-                if (response.isSuccess) {
-                    window.history.pushState({}, '', '/')
-                    window.router.loadPage('/')
-                    return
-                }
-            }
-            catch (err) {
-                console.log(err)
-            }
-        })
-    
         async function refreshData() {
             const preloader = document.querySelector('.spinner')
             const preloaderBg = document.querySelector('.preloader-bg')
@@ -122,8 +104,8 @@ export class ProfileView extends View {
                 try {
                     const response = await getProfile(`${apiUrl}/account/profile`)
                     if (!response.isSuccess) {
-                        window.history.pushState({}, '', '/')
-                        window.router.loadPage('/')
+                        window.history.pushState({}, '', '/login')
+                        window.router.loadPage('/login')
                     }
                     fullnameInput.value = response.response.fullName
                     birthdayInput.value = response.response.birthDate.split('T')[0]

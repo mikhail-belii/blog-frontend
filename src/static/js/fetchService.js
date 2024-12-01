@@ -563,3 +563,49 @@ export async function addComment(url, requestBody) {
         throw err
     }
 }
+
+export async function searchAddress(url) {
+    try {
+        const response = await fetch(url, {
+            method: "GET"
+        })
+
+        let resp = new Response()
+        resp.isSuccess = true
+
+        if (!response.ok) {
+            resp.isSuccess = false
+            return resp
+        }
+    
+        const data = await response.json()
+        resp.response = data
+        return resp
+    }
+    catch (err) {
+        throw err
+    }
+}
+
+export async function createPost(url, requestBody) {
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${getToken()}`
+            },
+            body: requestBody
+        })
+
+        let resp = new Response()
+        resp.isSuccess = response.ok
+    
+        const data = await response.json()
+        resp.response = data
+        return resp
+    }
+    catch (err) {
+        throw err
+    }
+}
