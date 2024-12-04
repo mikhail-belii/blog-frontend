@@ -1,4 +1,4 @@
-import { apiUrl } from "./constants.js"
+import dropPopup, { apiUrl } from "./constants.js"
 import { editProfile, getProfile, logout } from "./fetchService.js"
 import { View } from "./view.js"
 
@@ -29,7 +29,11 @@ export class ProfileView extends View {
                         <button type="button" id="save-btn">Сохранить</button>
                     </div>
                 </div>
-        `
+                <div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
+                </div>
+                `
     }
 
     async runScript() {
@@ -67,7 +71,7 @@ export class ProfileView extends View {
     
             if (!fullnameInput.value || !birthdayInput.value || !sexInput.value || 
                 !phoneInput.value || !emailInput.value) {
-                alert('Пожалуйста, заполните все поля')
+                dropPopup('Пожалуйста, заполните все поля')
                 return
             }
     
@@ -84,10 +88,15 @@ export class ProfileView extends View {
                 const response = await editProfile(`${apiUrl}/account/profile`, JSON.stringify(data))
                 if (response.isSuccess) {
                     userEmailText.innerText = emailInput.value
-                    alert("Профиль изменён")
+                    dropPopup("Профиль изменён")
                     return
                 }
-                alert(JSON.stringify(response.response.errors))
+                if (response.response.errors) {
+                    dropPopup(JSON.stringify(response.response.errors))
+                }
+                else {
+                    dropPopup(JSON.stringify(response.response))
+                }
             }
             catch (err) {
                 console.log(err)

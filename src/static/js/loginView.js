@@ -1,4 +1,4 @@
-import { apiUrl } from "./constants.js"
+import dropPopup, { apiUrl } from "./constants.js"
 import { getProfile, login } from "./fetchService.js"
 import { setToken } from "./tokenService.js"
 import { View } from "./view.js"
@@ -20,7 +20,11 @@ export class LoginView extends View {
                         <button type="button" id="registration">Зарегистрироваться</button>
                     </div>
                 </div>
-        `
+                <div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
+                </div>
+                `
     }
 
     async runScript() {
@@ -64,7 +68,7 @@ export class LoginView extends View {
                 password: passwordInput.value
             }
             if (!credentials.email || !credentials.password) {
-                alert('Введите Email и пароль')
+                dropPopup('Введите Email и пароль')
                 return
             }
             const preloader = document.querySelector('.spinner')
@@ -77,7 +81,7 @@ export class LoginView extends View {
                     const response = await login(`${apiUrl}/account/login`, JSON.stringify(credentials))
                     if (!response.isSuccess)
                     {
-                        alert("Неверный Email или пароль")
+                        dropPopup("Неверный Email или пароль")
                         return
                     }
                     

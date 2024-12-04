@@ -111,7 +111,7 @@ input, select {
     position: absolute;
     background-color: #f9f9f9;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    z-index: 5;
     width: 10vw;
     transform: translate(-10%);
 }
@@ -179,6 +179,67 @@ label {
     & > {
         margin-bottom: 0.5vh;
     }
+}
+
+/* Всплывающее окно */
+.popup
+{
+  color: white;
+  text-align: center;
+  max-width: 12vw;
+  display: none;
+  position: fixed;
+  bottom: 1vw;
+  right: 1vw;
+  background-color: rgba(@blue, 0.7);
+  padding: 1vw;
+  border-radius: 7px;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.popup.fadeOut
+{
+  animation-name: fadeOut;
+}
+
+.closePopup
+{
+  position: absolute;
+  top: 0;
+  right: 1vw;
+  font-size: 1.5vw;
+  cursor: pointer;
+}
+
+.closePopup:hover
+{
+  color: #bbb;
+}
+
+@keyframes fadeIn
+{
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut
+{
+  0%
+  {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100%
+  {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 
 //HOMEVIEW
@@ -1120,12 +1181,14 @@ textarea {
     grid-area: image;
     display: flex;
     flex-direction: column;
+    width: inherit;
 }
 
 .write-post-cont__content {
     grid-area: text;
     display: flex;
     flex-direction: column;
+    width: inherit;
 }
 
 .write-post-cont__address__title {
@@ -1161,4 +1224,8 @@ textarea {
     &:active {
         background-color: darken(@blue, 20%);
     }
+}
+
+.select2-container--default, .select2-selection--single {
+    width: 60vw;
 }

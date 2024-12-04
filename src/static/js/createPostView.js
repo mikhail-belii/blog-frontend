@@ -1,5 +1,5 @@
-import { apiUrl } from "./constants.js";
-import { createPost, getCommunity, getMyCommunities, getProfile, getTags, searchAddress } from "./fetchService.js";
+import dropPopup, { apiUrl } from "./constants.js";
+import { createPost, getCommunity, getMyCommunities, getProfile, getTags } from "./fetchService.js";
 import { View } from "./view.js";
 
 
@@ -43,8 +43,10 @@ export class CreatePostView extends View {
 
                     <div class="write-post-cont__create-post">Создать пост</div>
                 </div>
-
-                
+                <div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
+                </div>
                 `
     }
 
@@ -98,23 +100,23 @@ export class CreatePostView extends View {
                 address = objectGuids[objectGuids.length - 1]
             }
             if (title.length < 5 || title.length > 1000) {
-                alert('Длина названия не менее 5 и не более 1000 символов')
+                dropPopup('Длина названия не менее 5 и не более 1000 символов')
                 return
             }
             if (description.length < 5 || description.length > 5000) {
-                alert('Длина текста не менее 5 и не более 5000 символов')
+                dropPopup('Длина текста не менее 5 и не более 5000 символов')
                 return
             }
             if (readingTime <= 0 || readingTime > 1000000) {
-                alert('Время чтения меньше нуля, или равно ему, или слишком большое')
+                dropPopup('Время чтения меньше нуля, или равно ему, или слишком большое')
                 return
             }
             if (image !== '' && !isValidUrl(image)) {
-                alert('Ссылка на картинку не является корректной ссылкой')
+                dropPopup('Ссылка на картинку не является корректной ссылкой')
                 return
             }
             if (selectedTags.length === 0) {
-                alert('Выберите хотя бы 1 тег')
+                dropPopup('Выберите хотя бы 1 тег')
                 return
             }
             let postData = {

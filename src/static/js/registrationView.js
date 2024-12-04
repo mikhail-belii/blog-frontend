@@ -1,4 +1,4 @@
-import { apiUrl } from "./constants.js"
+import dropPopup, { apiUrl } from "./constants.js"
 import { getProfile, register } from "./fetchService.js"
 import { setToken } from "./tokenService.js"
 import { View } from "./view.js"
@@ -34,6 +34,10 @@ export class RegistrationView extends View {
                         <button type="button" class="reg-btn">Зарегистрироваться</button>
                     </div>
                 </div>
+                <div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
+                </div>
                 `
     }
 
@@ -66,7 +70,7 @@ export class RegistrationView extends View {
         writePostRdrct.style.display = 'none'
 
         const fullnameInput = document.getElementById('fullname-input')
-        const birthdayInput = document.getElementById('birthday-input')
+        const birthdayInput = document.querySelector('.birthday-input')
         const sexInput = document.getElementById('sex-input')
         const phoneInput = document.getElementById('phone-input')
         const emailInput = document.getElementById('email-input')
@@ -81,7 +85,7 @@ export class RegistrationView extends View {
 
             if (!fullnameInput.value || !birthdayInput.value || !sexInput.value || 
                 !phoneInput.value || !emailInput.value || !passwordInput.value) {
-                alert('Пожалуйста, заполните все поля')
+                dropPopup('Пожалуйста, заполните все поля')
                 return
             }
 
@@ -104,7 +108,12 @@ export class RegistrationView extends View {
                     const response = await register(`${apiUrl}/account/register`, JSON.stringify(data))
                     if (!response.isSuccess)
                     {
-                        alert(JSON.stringify(response.response.errors))
+                        if (response.response.errors) {
+                            dropPopup(JSON.stringify(response.response.errors))
+                        }
+                        else {
+                            dropPopup(JSON.stringify(response.response))
+                        }
                         return
                     }
                     

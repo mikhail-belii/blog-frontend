@@ -1,4 +1,4 @@
-import { apiUrl } from "./constants.js";
+import { apiUrl, isUserAuthorized } from "./constants.js";
 import { addComment, deleteComment, editComment, getAddressChain, getCommentChain, getPost, getProfile, likePost, logout, unlikePost } from "./fetchService.js";
 import { View } from "./view.js";
 
@@ -45,17 +45,23 @@ export class PostView extends View {
             preloader.style.display = 'block'
             setTimeout(async () => {
                 try {
-                    const response = await getProfile(`${apiUrl}/account/profile`)
-                    if (!response.isSuccess) {
+                    if (!isUserAuthorized()) {
                         userEmail.style.display = 'none'
                         loginRdrct.style.display = 'block'
                     }
                     else {
-                        loginRdrct.style.display = 'none'
-                        userEmail.style.display = 'block'
-                        userEmailText.innerText = response.response.email
-                        isAuthorized = true
-                        userId = response.response.id
+                        const response = await getProfile(`${apiUrl}/account/profile`)
+                        if (!response.isSuccess) {
+                            userEmail.style.display = 'none'
+                            loginRdrct.style.display = 'block'
+                        }
+                        else {
+                            loginRdrct.style.display = 'none'
+                            userEmail.style.display = 'block'
+                            userEmailText.innerText = response.response.email
+                            isAuthorized = true
+                            userId = response.response.id
+                        }
                     }
     
                     await loadPost()

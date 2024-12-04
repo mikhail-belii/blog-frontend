@@ -1,6 +1,6 @@
 import { View } from "./view.js";
-import { apiUrl } from "./constants.js"
-import { getPosts, getProfile, getTags, likePost, logout, unlikePost } from "./fetchService.js"
+import { apiUrl, isUserAuthorized } from "./constants.js"
+import { getPosts, getProfile, getTags, likePost, unlikePost } from "./fetchService.js"
 
 export class HomeView extends View {
     async getHtml() {
@@ -186,19 +186,25 @@ export class HomeView extends View {
         preloader.style.display = 'block'
         setTimeout(async () => {
             try {
-                const response = await getProfile(`${apiUrl}/account/profile`)
-                if (!response.isSuccess) {
+                if (!isUserAuthorized()) {
                     writePostBtn.style.display = 'none'
                     userEmail.style.display = 'none'
                     loginRdrct.style.display = 'block'
                 }
                 else {
-                    loginRdrct.style.display = 'none'
-                    userEmail.style.display = 'block'
-                    userEmailText.innerText = response.response.email
-                    isAuthorized = true
+                    const response = await getProfile(`${apiUrl}/account/profile`)
+                    if (!response.isSuccess) {
+                        writePostBtn.style.display = 'none'
+                        userEmail.style.display = 'none'
+                        loginRdrct.style.display = 'block'
+                    }
+                    else {
+                        loginRdrct.style.display = 'none'
+                        userEmail.style.display = 'block'
+                        userEmailText.innerText = response.response.email
+                        isAuthorized = true
+                    }
                 }
-
                 const response2 = await getTags(`${apiUrl}/tag`)
                 if (!response2.isSuccess) {
                     return
