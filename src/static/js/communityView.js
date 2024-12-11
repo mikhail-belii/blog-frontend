@@ -28,6 +28,9 @@ export class CommunityView extends View {
         let curPage = parseInt(params.page) || 1
         let pageSize = parseInt(params.size) || 5
         let listWithTags = params.tags || []
+        if (!Array.isArray(params.tags) && params.tags) {
+            listWithTags = [listWithTags]
+        }
         let sorting = params.sorting || 'CreateDesc'
 
         await refreshData()

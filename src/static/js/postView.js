@@ -1,4 +1,4 @@
-import { apiUrl, isUserAuthorized } from "./constants.js";
+import dropPopup, { apiUrl, isUserAuthorized } from "./constants.js";
 import { addComment, deleteComment, editComment, getAddressChain, getCommentChain, getPost, getProfile, likePost, logout, unlikePost } from "./fetchService.js";
 import { View } from "./view.js";
 
@@ -9,6 +9,13 @@ export class PostView extends View {
                 <div class="post-cont">
                     <div class="post">
                     </div>
+                    <div class="post__comments-cont">
+                        <span class="post__comments-cont__title">Комментарии</span>
+                    </div>
+                </div>
+                <div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
                 </div>
                 `
     }
@@ -65,6 +72,13 @@ export class PostView extends View {
                     }
     
                     await loadPost()
+
+                    const isScrolled = params.isScrolled
+                    if (isScrolled) {
+                        const commentsCont = document.querySelector('.post__comments-cont')
+                        const commentsY = commentsCont.getBoundingClientRect().y
+                        window.scrollBy(0, commentsY)
+                    }
                 }
                 catch(err) {
                     console.log(err)
@@ -235,55 +249,10 @@ export class PostView extends View {
                     $post.id = postId
 
                     if (post.comments.length !== 0) {
-                        const commentsCont = document.createElement('div')
-                        commentsCont.classList.add('post__comments-cont')
-                        const commentsContTitle = document.createElement('span')
-                        commentsContTitle.classList.add('post__comments-cont__title')
-                        commentsContTitle.innerHTML = 'Комментарии'
-                        commentsCont.appendChild(commentsContTitle)
-                        
-                        const commentsList = document.createElement('ul')
-                        commentsList.classList.add('post__comments-list')
-                        post.comments.forEach(async element => {
-                            const $comment = buildComment(element)
-                            if (element.subComments > 0) {
-                                try {
-                                    const response = await getCommentChain(`${apiUrl}/comment/${element.id}/tree`)
-                                    if (response.isSuccess) {
-                                        const openReplies = document.createElement('div')
-                                        openReplies.classList.add('post__comment__open-replies')
-                                        openReplies.innerText = 'Раскрыть ответы'
-                                        $comment.appendChild(openReplies)
-                                        const subcommentsList = document.createElement('ul')
-                                        subcommentsList.classList.add('post__subcomments-list')
-                                        response.response.forEach(subcomment => {
-                                            const $subcomment = buildComment(subcomment)
-                                            subcommentsList.appendChild($subcomment)
-                                        })
-                                        $comment.appendChild(subcommentsList)
-                                        openReplies.addEventListener('click', () => {
-                                            if (subcommentsList.classList.contains('opened')) {
-                                                subcommentsList.style.display = 'none'
-                                                subcommentsList.classList.remove('opened')
-                                                openReplies.innerText = 'Раскрыть ответы'
-                                            }
-                                            else {
-                                                subcommentsList.style.display = 'flex'
-                                                subcommentsList.classList.add('opened')
-                                                openReplies.innerText = 'Скрыть ответы'
-                                            }
-                                        })
-                                    }
-                                }
-                                catch (err) {
-                                    console.log(err)
-                                }
-                            }
-
-                            commentsList.appendChild($comment)
-                        })
-                        commentsCont.appendChild(commentsList)
-                        postCont.appendChild(commentsCont)
+                        await renderComments(post.comments, false)
+                    }
+                    else {
+                        document.querySelector('.post__comments-cont').style.display = 'none'
                     }
 
                     if (isAuthorized) {
@@ -298,14 +267,20 @@ export class PostView extends View {
                         sendComment.innerText = 'Отправить'
                         sendComment.addEventListener('click', async () => {
                             const commentContent = writeCommentArea.value
+                            if (commentContent.length === 0 || commentContent.length > 1000) {
+                                dropPopup('Некорректная длина комментария')
+                                return
+                            }
                             try {
                                 const response = await addComment(`${apiUrl}/post/${postId}/comment`, JSON.stringify({
                                     content: commentContent,
                                     parentId: null
                                 }))
                                 if (response.isSuccess) {
-                                    //!!!!!!!!!!!!!
-                                    window.router.loadPage(`/post/${postId}`)
+                                    await renderComments(await getPostComments(), true)
+                                    document.querySelector('.post__comments').querySelector('span').innerText = 
+                                    parseInt(document.querySelector('.post__comments').querySelector('span').innerText) + 1
+                                    writeCommentArea.value = ''
                                 }
                             }
                             catch (err) {
@@ -332,6 +307,63 @@ export class PostView extends View {
             const minutes = date.getMinutes().toString().padStart(2, '0')
             const formatted = `${day}.${month}.${year} ${hours}:${minutes}`
             return formatted
+        }
+
+        async function renderComments(comments, needScroll) {
+            const scrollPosition = window.scrollY
+
+            const commentsCont = document.querySelector('.post__comments-cont')
+            commentsCont.innerHTML = ''
+            const commentsContTitle = document.createElement('span')
+            commentsContTitle.classList.add('post__comments-cont__title')
+            commentsContTitle.innerHTML = 'Комментарии'
+            commentsCont.appendChild(commentsContTitle)
+
+            const commentsList = document.createElement('ul')
+            commentsList.classList.add('post__comments-list')
+            for (const element of comments) {
+                const $comment = buildComment(element)
+                if (element.subComments > 0) {
+                    try {
+                        const response = await getCommentChain(`${apiUrl}/comment/${element.id}/tree`)
+                        if (response.isSuccess) {
+                            const openReplies = document.createElement('div')
+                            openReplies.classList.add('post__comment__open-replies')
+                            openReplies.innerText = 'Раскрыть ответы'
+                            $comment.appendChild(openReplies)
+                            const subcommentsList = document.createElement('ul')
+                            subcommentsList.classList.add('post__subcomments-list')
+                            response.response.forEach(subcomment => {
+                                const $subcomment = buildComment(subcomment)
+                                subcommentsList.appendChild($subcomment)
+                            })
+                            $comment.appendChild(subcommentsList)
+                            openReplies.addEventListener('click', () => {
+                                if (subcommentsList.classList.contains('opened')) {
+                                    subcommentsList.style.display = 'none'
+                                    subcommentsList.classList.remove('opened')
+                                    openReplies.innerText = 'Раскрыть ответы'
+                                }
+                                else {
+                                    subcommentsList.style.display = 'flex'
+                                    subcommentsList.classList.add('opened')
+                                    openReplies.innerText = 'Скрыть ответы'
+                                }
+                            })
+                        }
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+                }
+
+                commentsList.appendChild($comment)
+            }
+            commentsCont.appendChild(commentsList)
+
+            if (needScroll) {
+                window.scrollBy(0, scrollPosition)
+            }
         }
 
         function buildComment(element) {
@@ -418,28 +450,33 @@ export class PostView extends View {
                     applyEdit.innerText = 'Редактировать'
                     applyEdit.addEventListener('click', async () => {
                         const content = editInput.value
+                        if (content.length === 0 || content.length > 1000) {
+                            dropPopup('Некорректная длина комментария')
+                            return
+                        }
                         try {
                             const response = await editComment(`${apiUrl}/comment/${element.id}`, JSON.stringify({content: content}))
                             if (response.isSuccess) {
-                                $commentContent.innerText = content
-                                comment = content
-                                if (originalCommentChanged) {
-                                    originalCommentChanged.remove()
-                                }
-                                const $commentChanged = document.createElement('span')
-                                $commentChanged.classList.add('post__comment-changed')
-                                $commentChanged.innerText = ' (изменен)'
-                                const $commentChangedInfo = document.createElement('div')
-                                $commentChangedInfo.classList.add('post__comment-changed__info')
-                                $commentChangedInfo.innerHTML = `
-                                    <div>${formatDate(element.createTime)}</div>
-                                    <div>Изменено: ${formatDate(new Date())}</div>
-                                `
-                                $commentChanged.appendChild($commentChangedInfo)
-                                $commentContent.appendChild($commentChanged)
-                                editCont.remove()
-                                editCont = null
-                                $commentContent.style.display = 'inline'
+                                // $commentContent.innerText = content
+                                // comment = content
+                                // if (originalCommentChanged) {
+                                //     originalCommentChanged.remove()
+                                // }
+                                // const $commentChanged = document.createElement('span')
+                                // $commentChanged.classList.add('post__comment-changed')
+                                // $commentChanged.innerText = ' (изменен)'
+                                // const $commentChangedInfo = document.createElement('div')
+                                // $commentChangedInfo.classList.add('post__comment-changed__info')
+                                // $commentChangedInfo.innerHTML = `
+                                //     <div>${formatDate(element.createTime)}</div>
+                                //     <div>Изменено: ${formatDate(new Date())}</div>
+                                // `
+                                // $commentChanged.appendChild($commentChangedInfo)
+                                // $commentContent.appendChild($commentChanged)
+                                // editCont.remove()
+                                // editCont = null
+                                // $commentContent.style.display = 'inline'
+                                await renderComments(await getPostComments(), true)
                             }
                         }
                         catch (err) {
@@ -459,9 +496,10 @@ export class PostView extends View {
                     try {
                         const response = await deleteComment(`${apiUrl}/comment/${element.id}`)
                         if (response.isSuccess) {
-                            $comment.remove()
+                            // $comment.remove()
                             document.querySelector('.post__comments').querySelector('span').innerText = 
                                 parseInt(document.querySelector('.post__comments').querySelector('span').innerText) - 1
+                            await renderComments(await getPostComments(), true)
                         }
                     }
                     catch (err) {
@@ -492,16 +530,23 @@ export class PostView extends View {
                     applyReply.innerText = 'Отправить'
                     applyReply.addEventListener('click', async () => {
                         const replyContent = replyInput.value
+                        if (replyContent.length === 0 || replyContent.length > 1000) {
+                            dropPopup('Некорректная длина комментария')
+                            return
+                        }
                         try {
                             const response = await addComment(`${apiUrl}/post/${postId}/comment`, JSON.stringify({
                                 content: replyContent,
                                 parentId: element.id
                             }))
                             if (response.isSuccess) {
-                                replyCont.remove()
-                                replyCont = null
-                                //!!!!!!!!!!!!!
-                                window.router.loadPage(`/post/${postId}`)
+                                // replyCont.remove()
+                                // replyCont = null
+                                // //!!!!!!!!!!!!!
+                                // window.router.loadPage(`/post/${postId}`)
+                                await renderComments(await getPostComments(), true)
+                                document.querySelector('.post__comments').querySelector('span').innerText = 
+                                parseInt(document.querySelector('.post__comments').querySelector('span').innerText) + 1
                             }
                         }
                         catch (err) {
@@ -518,18 +563,16 @@ export class PostView extends View {
             return $comment
         }
 
-        const isScrolled = params.isScrolled
-        if (isScrolled) {
-            const observer = new MutationObserver(() => {
-                const commentsCont = document.querySelector('.post__comments-cont')
-                if (commentsCont) {
-                    const commentsY = commentsCont.getBoundingClientRect().y
-                    window.scrollBy(0, commentsY)
-                    observer.disconnect()
+        async function getPostComments() {
+            try {
+                const response = await getPost(`${apiUrl}/post/${postId}`)
+                if (response.isSuccess) {
+                    return response.response.comments
                 }
-            })
-        
-            observer.observe(document.body, { childList: true, subtree: true })
+            }
+            catch (err) {
+                console.log(err)
+            }
         }
     }
 }

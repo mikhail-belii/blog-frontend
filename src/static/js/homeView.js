@@ -101,10 +101,13 @@ export class HomeView extends View {
         let curPage = parseInt(params.page) || 1
         let pageSize = parseInt(params.size) || 5
         let listWithTags = params.tags || []
+        if (!Array.isArray(params.tags) && params.tags) {
+            listWithTags = [listWithTags]
+        }
         let sorting = params.sorting || 'CreateDesc'
         let min = parseInt(params.min) || null
         let max = parseInt(params.max) || null
-        let onlyMine = params.onlyMine || false
+        let onlyMine = params.onlyMyCommunities || false
         let author = params.author || ''
 
         await refreshData()
@@ -127,7 +130,7 @@ export class HomeView extends View {
                 sorting: sorting,
                 min: min,
                 max: max,
-                onlyMine: onlyMine,
+                onlyMyCommunities: onlyMine,
                 author: author
             })
         })
@@ -174,7 +177,7 @@ export class HomeView extends View {
             sorting: sortingList.value,
             min: minTime.value,
             max: maxTime.value,
-            onlyMine: $onlyMine.checked,
+            onlyMyCommunities: $onlyMine.checked,
             author: authorName.value
         })
         })
@@ -313,7 +316,7 @@ export class HomeView extends View {
                     sorting: sorting,
                     min: min,
                     max: max,
-                    onlyMine: onlyMine,
+                    onlyMyCommunities: onlyMine,
                     author: author
                 })
             }
@@ -332,7 +335,7 @@ export class HomeView extends View {
                     sorting: sorting,
                     min: min,
                     max: max,
-                    onlyMine: onlyMine,
+                    onlyMyCommunities: onlyMine,
                     author: author
                 })
             }
@@ -359,7 +362,7 @@ export class HomeView extends View {
                 sorting: sorting,
                 min: min,
                 max: max,
-                onlyMine: onlyMine,
+                onlyMyCommunities: onlyMine,
                 author: author
             })
         })
@@ -384,7 +387,7 @@ export class HomeView extends View {
 
         const response = await getPosts(`${apiUrl}/post${document.location.search}`)
         if (!response.isSuccess) {
-            alert(JSON.stringify(response.response.errors))
+            console.log('Error occured')
             return
         }
         const posts = response.response.posts
