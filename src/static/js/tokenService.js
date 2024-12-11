@@ -10,5 +10,8 @@ export function setToken(token) {
 }
 
 export function isTokenExpired() {
+    if (!getToken()) {
+        return false
+    }
     return (new Date(jose.decodeJwt(getToken()).exp) * 1000) < Date.now()
 }
