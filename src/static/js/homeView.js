@@ -1,5 +1,5 @@
 import { View } from "./view.js";
-import { apiUrl, isUserAuthorized } from "./constants.js"
+import dropPopup, { apiUrl, isUserAuthorized } from "./constants.js"
 import { getPosts, getProfile, getTags, likePost, unlikePost } from "./fetchService.js"
 
 export class HomeView extends View {
@@ -67,6 +67,10 @@ export class HomeView extends View {
                     <option value="25">25</option>
                 </select>
             </div>
+        </div>
+        <div id="popup" class="popup">
+            <span class="closePopup">&times;</span>
+            <p id="popupText"></p>
         </div>
         `
     }
@@ -140,7 +144,7 @@ export class HomeView extends View {
         if (minTime.value < 0 || minTime.value > 100000 ||
                 maxTime.value < 0 || maxTime.value > 100000 || 
                 minTime.value > maxTime.value && minTime.value !== '' && maxTime.value !== '') {
-            alert('Введите корректное время чтения')
+            dropPopup('Введите корректное время чтения')
             return
         }
 
@@ -375,7 +379,7 @@ export class HomeView extends View {
         sortingList.value = sorting
         minTime.value = min
         maxTime.value = max
-        $onlyMine.checked = onlyMine == "true"
+        $onlyMine.checked = onlyMine.toString() == "true"
         $pageSize.value = pageSize
 
         listWithTags.forEach(tagId => {

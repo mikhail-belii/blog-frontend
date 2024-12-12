@@ -4,7 +4,10 @@ import { View } from "./view.js";
 
 export class CommunityView extends View {
     async getHtml() {
-        return ``
+        return `<div id="popup" class="popup">
+                    <span class="closePopup">&times;</span>
+                    <p id="popupText"></p>
+                </div>`
     }
 
     async runScript(params) {

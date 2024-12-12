@@ -41,7 +41,7 @@ body {
 .header-container {
     display: flex;
     align-items: center;
-    box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.06vw 0.32vw 0.06vw rgba(0, 0, 0, 0.3);
 }
 
 .body-container {
@@ -84,9 +84,9 @@ body {
 input, select {
     height: 3vh;
     border: none;
-    box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0.13vw 0.13vw 0.19vw 0.06vw rgba(0, 0, 0, 0.3);
     outline: none;
-    border-radius: 4px;
+    border-radius: 0.26vw;
     font-family: inherit;
     font-size: 1vw;
     padding-left: 0.5vw;
@@ -110,7 +110,7 @@ input, select {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 0.52vw 1.04vw 0 rgba(0,0,0,0.2);
     z-index: 5;
     width: 10vw;
     transform: translate(-10%);
@@ -171,7 +171,7 @@ input[type="checkbox"] {
 }
 select {
     outline: none;
-    border-radius: 5px;
+    border-radius: 0.32vw;
 }
 
 label {
@@ -193,7 +193,7 @@ label {
   right: 1vw;
   background-color: rgba(@blue, 0.7);
   padding: 1vw;
-  border-radius: 7px;
+  border-radius: 0.45vw;
   animation: fadeIn 0.5s ease forwards;
 }
 
@@ -253,7 +253,7 @@ label {
     color: white;
     border: none;
     padding: 1vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     font-size: 1vw;
     align-self: center;
     padding-left: 1vw;
@@ -353,12 +353,13 @@ label {
 }
 
 .post {
-    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0.06vw 0.06vw 0.19vw 0.06vw rgba(0, 0, 0, 0.3);
     padding: 2vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     & > *:not(.post__footer) {
         margin-bottom: 1vh;
     }
+    width: inherit;
 }
 
 .post__title {
@@ -413,6 +414,9 @@ label {
         opacity: 0.7;
         margin-right: 0.5vw;
     }
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .post__footer {
@@ -450,7 +454,7 @@ label {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    border: 1px solid @blue;
+    border: 0.06vw solid @blue;
 }
 
 .pagination__item {
@@ -493,7 +497,7 @@ label {
     padding-right: 0.5vw;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     background-color: @blue;
     &:hover {
         background-color: darken(@blue, 10%);
@@ -507,8 +511,8 @@ label {
     display: flex;
     width: 100%;
     height: 8vh;
-    box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    box-shadow: 0 0.06vw 0.06vw 0 rgba(0,0,0,0.2);
+    border-radius: 0.32vw;
     cursor: default;
     transition: background-color 0.2s ease;
     align-items: center;
@@ -540,8 +544,8 @@ label {
 .main-info {
     display: grid;
     row-gap: 1vh;
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.19vw 0.06vw rgba(0,0,0,0.2);
+    border-radius: 0.32vw;
     & > *:not(.main-info__admins) {
         padding-left: 1vw;
     }
@@ -638,7 +642,7 @@ label {
     padding: 0.5vh 0.5vw;
     margin: 1vw 1vw;
     z-index: 3;
-    border-radius: 5px;
+    border-radius: 0.32vw;
 }
 
 //COMMUNITIESVIEW
@@ -655,8 +659,8 @@ label {
     display: flex;
     width: 60vw;
     height: 7vh;
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.19vw 0.06vw rgba(0,0,0,0.2);
+    border-radius: 0.32vw;
     cursor: pointer;
     transition: background-color 0.2s ease;
     padding: 1vh 1vw;
@@ -690,8 +694,8 @@ label {
 .author {
     display: flex;
     width: 60vw;
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.19vw 0.06vw rgba(0,0,0,0.2);
+    border-radius: 0.32vw;
     cursor: pointer;
     transition: background-color 0.2s ease;
     padding: 1vh 1vw;
@@ -768,7 +772,7 @@ label {
     color: white;
     background-color: @blue;
     padding: 0.3vh 0.7vw;
-    border-radius: 5px;
+    border-radius: 0.32vw;
 }
 
 //PROFILEVIEW
@@ -794,7 +798,7 @@ label {
     font-size: inherit;
     padding-top: 0.3vh;
     padding-bottom: 0.3vh;
-    border-radius: 4px;
+    border-radius: 0.26vw;
     height: 4vh;
 }
 
@@ -807,7 +811,7 @@ label {
     color: white;
     border: none;
     padding: 1vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     font-size: 1vw;
     align-self: center;
     padding-left: 1vw;
@@ -839,9 +843,9 @@ label {
     flex-direction: column;
     gap: 1vh;
     width: 30vw;
-    box-shadow: 2px 2px 10px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0.13vw 0.13vw 0.65vw 0.06vw rgba(0, 0, 0, 0.3);
     padding: 2%;
-    border-radius: 5px;
+    border-radius: 0.32vw;
 }
 
 //LOGINVIEW
@@ -862,7 +866,7 @@ label {
     color: white;
     border: none;
     padding: 1vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     font-size: 1vw;
     cursor: pointer;
     transition: background 0.1s linear;
@@ -899,7 +903,7 @@ label {
     color: white;
     border: none;
     padding: 1vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     font-size: 1vw;
     cursor: pointer;
     transition: background 0.1s linear;
@@ -934,8 +938,8 @@ label {
 }
 
 .post__comments-cont {
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.13vw 0.06vw rgba(0, 0, 0, 0.3);
+    border-radius: 0.32vw;
     margin-top: 2vh;
     padding: 2vh;
 }
@@ -966,8 +970,8 @@ label {
     display: flex;
     flex-direction: column;
     gap: 1vh;
-    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.06vw 0 rgba(0,0,0,0.2);
+    border-radius: 0.32vw;
     padding: 1vh;
 }
 
@@ -979,7 +983,7 @@ label {
 }
 
 .post__comment div input {
-    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.2);
+    box-shadow: 0.06vw 0.06vw 0.06vw 0 rgba(0,0,0,0.2);
 }
 
 .post__comment__title {
@@ -1045,7 +1049,7 @@ label {
     
     padding: 0.5vh 1vh;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 0.19vw;
 }
 
 .post__comment__reply-cont {
@@ -1077,15 +1081,15 @@ label {
     color: white;
     padding: 0.5vh 1vh;
     cursor: pointer;
-    border-radius: 3px;
+    border-radius: 0.19vw;
 }
 
 .post__write-comment-cont {
     display: flex;
     flex-direction: column;
     gap: 2vh;
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.13vw 0.06vw rgba(0, 0, 0, 0.3);
+    border-radius: 0.32vw;
     margin-top: 2vh;
     padding: 2vh;
 
@@ -1094,7 +1098,7 @@ label {
         color: white;
         padding: 0.5vh 1vh;
         cursor: pointer;
-        border-radius: 3px;
+        border-radius: 0.19vw;
         align-self: flex-end;
         background-color: @blue;
         transition: background 0.1s linear;
@@ -1134,11 +1138,11 @@ textarea {
     row-gap: 1.5vh;
     align-items: center;
     margin: 0 auto;
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
+    box-shadow: 0.06vw 0.06vw 0.13vw 0.06vw rgba(0, 0, 0, 0.3);
+    border-radius: 0.32vw;
     padding: 1vw;
     & > div > input, select {
-        box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0.06vw 0.06vw 0.13vw 0.06vw rgba(0, 0, 0, 0.2);
         height: 4vh;
     }
 }
@@ -1215,7 +1219,7 @@ textarea {
     padding-left: 0.5vw;
     padding-right: 0.5vw;
     margin-top: 1vh;
-    border-radius: 5px;
+    border-radius: 0.32vw;
     cursor: pointer;
     transition: background 0.1s linear;
     &:hover {
@@ -1228,4 +1232,141 @@ textarea {
 
 .select2-container--default, .select2-selection--single {
     width: 60vw;
+}
+
+////////////////
+
+@media screen and (max-width: 1024px) {
+    body {
+        font-size: 3vw;
+        background-color: white;
+    }
+
+    .preloader-bg {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .grid-container {
+        grid-template-rows: auto;
+    }
+
+    .header-container {
+        flex-direction: column;
+        padding: 1vh;
+    }
+
+    .body-container {
+        margin-top: 5vh;
+        gap: 5vh;
+    }
+
+    .main-container {
+        width: 90vw;
+        margin-top: 3vh;
+    }
+
+    .footer-container {
+        margin-left: 0;
+        opacity: 100%;
+    }
+
+    .form-container {
+        width: 70vw;
+    }
+
+    .navigation {
+        flex-direction: column;
+        margin: 1vh 0;
+    }
+
+    .site-name {
+        font-size: 3.5vw;
+    }
+
+    select, .pagination__size select {
+        height: 7vh;
+        font-size: 2.5vw;
+        background-color: white;
+    }
+
+    input {
+        height: 4vh;
+        font-size: 4vw;
+        background-color: white;
+    }
+
+    #communities, #login, .user-email {
+        margin-left: 0;
+    }
+
+    .post__comment__title, .post__comments-cont__title, .write-post-cont__address__title,
+     .community__name, .main-info__admins__title, .main-info__title span, .post__title, 
+     #save-btn, .head, #apply-filters-btn, #postt, #registration, .login-btn, .reg-btn,
+     .post__comment-changed__info {
+        font-size: 3vw;
+    }
+
+    .author, .filters, .filters-min {
+        display: block;
+    }
+
+    .dropdown-content {
+        width: 80vw;
+        transform: translate(-20%);
+    }
+
+    .spinner {
+        width: 15vw;
+        height: 15vw;
+        top: 25%;
+    }
+
+    .popup {
+        max-width: 40vw;
+    }
+
+    .closePopup {
+        font-size: 7vw;
+    }
+
+    .post {
+        width: 90vw;
+    }
+
+    .post__comment-changed__info {
+        width: 20vw;
+    }
+
+    .pagination {
+        flex-direction: column;
+        align-items: center;
+        margin: 2vh 0;
+    }
+
+    .pagination__item {
+        padding: 1vh;
+        width: auto;
+    }
+
+    .write-post-cont {
+        width: 90vw;
+        padding: 2vh;
+    }
+
+    .write-post-cont__title {
+        font-size: 4vw;
+    }
+
+    textarea {
+        height: 25vh;
+    }
+
+    .post-cont {
+        justify-self: unset;
+    }
+
+    .post__comment div img {
+        height: 5vw;
+    }
 }
