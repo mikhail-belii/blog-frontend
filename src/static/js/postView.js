@@ -251,9 +251,6 @@ export class PostView extends View {
                     if (post.comments.length !== 0) {
                         await renderComments(post.comments, false)
                     }
-                    else {
-                        document.querySelector('.post__comments-cont').style.display = 'none'
-                    }
 
                     if (isAuthorized) {
                         const writeComment = document.createElement('div')
