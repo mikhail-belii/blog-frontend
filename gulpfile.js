@@ -14,6 +14,6 @@ $.path.tasks.forEach(function (taskPath) {
 })
 
 $.gulp.task('default', $.gulp.series(
-    $.gulp.parallel('pages', 'less', 'scripts', 'svg'),
+    $.gulp.parallel('pages', 'less', 'scripts', 'svg', 'fonts'),
     $.gulp.parallel('watch', 'browser-sync')
 ))
