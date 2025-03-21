@@ -4,5 +4,6 @@ module.exports = [
     './gulp/tasks/watch',
     './gulp/tasks/browser-sync',
     './gulp/tasks/script',
-    './gulp/tasks/svg'
+    './gulp/tasks/svg',
+    './gulp/tasks/fonts'
 ]
